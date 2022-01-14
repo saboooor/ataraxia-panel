@@ -55,7 +55,7 @@ export default () => {
     }, []);
 
     return (
-        <TitledGreyBox title={'Wipe Server'} css={tw`relative`}>
+        <TitledGreyBox title={'Wipe Rust Server'} css={tw`relative`}>
             <ConfirmationModal
                 title={'Confirm server wipe'}
                 buttonText={'Yes, wipe server'}
@@ -64,7 +64,8 @@ export default () => {
                 visible={modalVisible}
                 onModalDismissed={() => setModalVisible(false)}
             >
-                Your server will be stopped and the selected data will be deleted, are you sure you wish to continue?
+                <p>Your server will be stopped and the selected data will be deleted, are you sure you wish to continue?</p>
+                <p><b>This will only work for Rust servers!</b></p>
             </ConfirmationModal>
             <div css={tw`flex items-center w-full md:w-auto`}>
                 <div>

@@ -125,7 +125,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
-                                    <option value={'wipe'}>Wipe server</option>
+                                    <option value={'wipe'}>Wipe rust server</option>
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
