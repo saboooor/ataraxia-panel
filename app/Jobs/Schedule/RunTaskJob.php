@@ -3,6 +3,8 @@
 namespace Pterodactyl\Jobs\Schedule;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Pterodactyl\Jobs\Job;
 use Carbon\CarbonImmutable;
 use Pterodactyl\Models\Task;
@@ -11,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Pterodactyl\Repositories\Wings\DaemonFileRepository;
 use Pterodactyl\Services\Backups\InitiateBackupService;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
 use Pterodactyl\Repositories\Wings\DaemonCommandRepository;
@@ -50,7 +53,8 @@ class RunTaskJob extends Job implements ShouldQueue
     public function handle(
         DaemonCommandRepository $commandRepository,
         InitiateBackupService $backupService,
-        DaemonPowerRepository $powerRepository
+        DaemonPowerRepository $powerRepository,
+        DaemonFileRepository $fileRepository
     ) {
         // Do not process a task that is not set to active, unless it's been manually triggered.
         if (!$this->task->schedule->is_active && !$this->manualRun) {
@@ -72,6 +76,19 @@ class RunTaskJob extends Job implements ShouldQueue
                     break;
                 case Task::ACTION_BACKUP:
                     $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);
+                    break;
+                case Task::ACTION_WIPE:
+                    $filesToDelete = collect([]);
+                    collect($fileRepository->setServer($server)->getDirectory('/server/rust'))->each(function ($item, $key) use ($filesToDelete) {
+                        if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.map'])) {
+                            $filesToDelete->push($item['name']);
+                        }
+
+                        if (($this->task->payload == 'player' || $this->task->payload == 'both') && Str::startsWith($item['name'], 'player.') && Str::endsWith($item['name'], ['.db', '.db-journal'])) {
+                            $filesToDelete->push($item['name']);
+                        }
+                    });
+                    $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
                     break;
                 default:
                     throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
