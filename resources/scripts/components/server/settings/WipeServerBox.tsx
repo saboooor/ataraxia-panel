@@ -18,6 +18,7 @@ export default () => {
     const [ modalVisible, setModalVisible ] = useState(false);
     const { addFlash, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
+    const [ shouldRegenSeed, setRegenSeed ] = useState(true);
     const [ shouldDeleteWorld, setDeleteWorld ] = useState(true);
     const [ shouldDeletePlayerData, setDeletePlayerData ] = useState(false);
 
@@ -31,7 +32,7 @@ export default () => {
 
         sendPowerCommand('stop');
 
-        wipeServer(uuid, shouldDeleteWorld, shouldDeletePlayerData)
+        wipeServer(uuid, shouldRegenSeed, shouldDeleteWorld, shouldDeletePlayerData)
             .then(() => {
                 addFlash({
                     key: 'settings',
@@ -67,7 +68,13 @@ export default () => {
                 <p>Your server will be stopped and the selected data will be deleted, are you sure you wish to continue?</p>
                 <p><b>This will only work for Rust servers!</b></p>
             </ConfirmationModal>
-            <div css={tw`flex items-center w-full md:w-auto`}>
+            <Switch
+                name="shouldRegenSeed"
+                label="Regenerate Seed"
+                onChange={() => setRegenSeed(s => !s)}
+                defaultChecked={shouldRegenSeed}
+            />
+            <div css={tw`mt-2 flex items-center w-full md:w-auto`}>
                 <div>
                     <Switch
                         name="shouldDeleteWorld"

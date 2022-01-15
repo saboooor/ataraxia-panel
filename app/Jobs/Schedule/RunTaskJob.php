@@ -89,6 +89,14 @@ class RunTaskJob extends Job implements ShouldQueue
                         }
                     });
                     $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
+                    if ($this->task->payload == 'world' || $this->task->payload == 'both') {
+                        /** @var \Pterodactyl\Models\EggVariable $variable */
+                        $variable = $server->variables()->where('env_variable', 'WORLD_SEED')->first();
+                        if ($variable) {
+                            $variable = $variable->refresh();
+                            $variable->server_value = strval(mt_rand(132132, 132132132));
+                        }
+                    }
                     break;
                 default:
                     throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
