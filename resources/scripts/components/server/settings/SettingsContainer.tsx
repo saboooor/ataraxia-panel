@@ -22,6 +22,7 @@ export default () => {
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
     const node = ServerContext.useStoreState(state => state.server.data!.node);
     const sftp = ServerContext.useStoreState(state => state.server.data!.sftpDetails, isEqual);
+    const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
 
     return (
         <ServerContentBlock title={'Settings'}>
@@ -94,7 +95,7 @@ export default () => {
                         </div>
                     </Can>
                     <Can action={'settings.reinstall'}>
-                        <WipeServerBox/>
+                        {eggFeatures.includes('rust_wipe') && <WipeServerBox/>}
                     </Can>
                 </div>
             </div>

@@ -78,23 +78,25 @@ class RunTaskJob extends Job implements ShouldQueue
                     $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);
                     break;
                 case Task::ACTION_WIPE:
-                    $filesToDelete = collect([]);
-                    collect($fileRepository->setServer($server)->getDirectory('/server/rust'))->each(function ($item, $key) use ($filesToDelete) {
-                        if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.map'])) {
-                            $filesToDelete->push($item['name']);
-                        }
+                    if (in_array('rust_wipe', $server->variables)) {
+                        $filesToDelete = collect([]);
+                        collect($fileRepository->setServer($server)->getDirectory('/server/rust'))->each(function ($item, $key) use ($filesToDelete) {
+                            if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.map'])) {
+                                $filesToDelete->push($item['name']);
+                            }
 
-                        if (($this->task->payload == 'player' || $this->task->payload == 'both') && Str::startsWith($item['name'], 'player.') && Str::endsWith($item['name'], ['.db', '.db-journal'])) {
-                            $filesToDelete->push($item['name']);
-                        }
-                    });
-                    $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
-                    if ($this->task->payload == 'world' || $this->task->payload == 'both') {
-                        /** @var \Pterodactyl\Models\EggVariable $variable */
-                        $variable = $server->variables()->where('env_variable', 'WORLD_SEED')->first();
-                        if ($variable) {
-                            $variable = $variable->refresh();
-                            $variable->server_value = strval(mt_rand(132132, 132132132));
+                            if (($this->task->payload == 'player' || $this->task->payload == 'both') && Str::startsWith($item['name'], 'player.') && Str::endsWith($item['name'], ['.db', '.db-journal'])) {
+                                $filesToDelete->push($item['name']);
+                            }
+                        });
+                        $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
+                        if ($this->task->payload == 'world' || $this->task->payload == 'both') {
+                            /** @var \Pterodactyl\Models\EggVariable $variable */
+                            $variable = $server->variables()->where('env_variable', 'WORLD_SEED')->first();
+                            if ($variable) {
+                                $variable = $variable->refresh();
+                                $variable->server_value = strval(mt_rand(132132, 132132132));
+                            }
                         }
                     }
                     break;

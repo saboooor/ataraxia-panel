@@ -17,6 +17,7 @@ import Select from '@/components/elements/Select';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
 import FormikSwitch from '@/components/elements/FormikSwitch';
+import isEqual from 'react-fast-compare';
 
 interface Props {
     schedule: Schedule;
@@ -70,6 +71,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
     const appendSchedule = ServerContext.useStoreActions(actions => actions.schedules.appendSchedule);
     const backupLimit = ServerContext.useStoreState(state => state.server.data!.featureLimits.backups);
+    const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
 
     useEffect(() => {
         return () => {
@@ -125,7 +127,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
-                                    <option value={'wipe'}>Wipe rust server</option>
+                                    {eggFeatures.includes('rust_wipe') && <option value={'wipe'}>Wipe rust server</option>}
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
