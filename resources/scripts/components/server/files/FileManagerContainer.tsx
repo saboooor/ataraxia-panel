@@ -103,8 +103,8 @@ export default () => {
                     />
                 </ErrorBoundary>
 
-                <Formik css={tw`h-5/6 ml-10 w-full`} initialValues={{ term: '' } as Values} onSubmit={searchFiles}>
-                    <Form>
+                <Formik initialValues={{ term: '' } as Values} onSubmit={searchFiles}>
+                    <Form css={tw`h-5/6 ml-10 w-full`}>
                         <SearchWatcher />
                         <Field as={InputWithRef} name={'term'} />
                     </Form>
