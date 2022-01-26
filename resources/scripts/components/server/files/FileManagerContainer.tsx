@@ -20,10 +20,28 @@ import { useStoreActions } from '@/state/hooks';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
+import { Form, Formik, useFormikContext } from 'formik';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+
+interface Values {
+    term: string;
+}
+
+let searchString = '';
+
+const SearchWatcher = () => {
+    const { values, submitForm } = useFormikContext<Values>();
+
+    useEffect(() => {
+        submitForm();
+    }, [ values.term ]);
+
+    return null;
+};
 
 const sortFiles = (files: FileObject[]): FileObject[] => {
     const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
-    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name);
+    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.includes(searchString));
 };
 
 export default () => {
@@ -53,9 +71,16 @@ export default () => {
 
     if (error) {
         return (
-            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()}/>
+            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />
         );
     }
+
+    const searchFiles = (values: Values) => {
+        if (files) {
+            searchString = values.term;
+            sortFiles(files);
+        }
+    };
 
     return (
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
@@ -72,11 +97,24 @@ export default () => {
                         }
                     />
                 </ErrorBoundary>
+
+                <Formik initialValues={{ term: '' } as Values} onSubmit={searchFiles}>
+                    <Form>
+                        <FormikFieldWrapper
+                            name={'term'}
+                            label={'Search term'}
+                            description={'Enter file or folder name to begin searching.'}
+                        >
+                            <SearchWatcher />
+                        </FormikFieldWrapper>
+                    </Form>
+                </Formik>
+
                 <Can action={'file.create'}>
                     <ErrorBoundary>
                         <div css={tw`flex flex-shrink-0 flex-wrap-reverse md:flex-nowrap justify-end mb-4 md:mb-0 ml-0 md:ml-auto`}>
-                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`}/>
-                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`}/>
+                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`} />
+                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`} />
                             <NavLink
                                 to={`/server/${id}/files/new${window.location.hash}`}
                                 css={tw`flex-1 sm:flex-none sm:mt-0`}
@@ -91,7 +129,7 @@ export default () => {
             </div>
             {
                 !files ?
-                    <Spinner size={'large'} centered/>
+                    <Spinner size={'large'} centered />
                     :
                     <>
                         {!files.length ?
@@ -102,19 +140,19 @@ export default () => {
                             <CSSTransition classNames={'fade'} timeout={150} appear in>
                                 <div>
                                     {files.length > 250 &&
-                                    <div css={tw`rounded bg-yellow-400 mb-px p-3`}>
-                                        <p css={tw`text-yellow-900 text-sm text-center`}>
-                                            This directory is too large to display in the browser,
-                                            limiting the output to the first 250 files.
-                                        </p>
-                                    </div>
+                                        <div css={tw`rounded bg-yellow-400 mb-px p-3`}>
+                                            <p css={tw`text-yellow-900 text-sm text-center`}>
+                                                This directory is too large to display in the browser,
+                                                limiting the output to the first 250 files.
+                                            </p>
+                                        </div>
                                     }
                                     {
                                         sortFiles(files.slice(0, 250)).map(file => (
-                                            <FileObjectRow key={file.key} file={file}/>
+                                            <FileObjectRow key={file.key} file={file} />
                                         ))
                                     }
-                                    <MassActionsBar/>
+                                    <MassActionsBar />
                                 </div>
                             </CSSTransition>
                         }
