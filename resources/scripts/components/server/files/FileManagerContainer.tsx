@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -20,8 +20,9 @@ import { useStoreActions } from '@/state/hooks';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
-import { Form, Formik, useFormikContext } from 'formik';
+import { Field, Form, Formik, useFormikContext } from 'formik';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
+import Input from '@/components/elements/Input';
 
 interface Values {
     term: string;
@@ -45,6 +46,7 @@ const sortFiles = (files: FileObject[]): FileObject[] => {
 };
 
 export default () => {
+    const ref = useRef<HTMLInputElement>(null);
     const id = ServerContext.useStoreState(state => state.server.data!.id);
     const { hash } = useLocation();
     const { data: files, error, mutate } = useFileManagerSwr();
@@ -82,6 +84,8 @@ export default () => {
         }
     };
 
+    const InputWithRef = (props: any) => <Input autoFocus {...props} ref={ref}/>;
+
     return (
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
             <div css={tw`flex flex-wrap-reverse md:flex-nowrap justify-center mb-4`}>
@@ -106,6 +110,7 @@ export default () => {
                             description={'Enter file or folder name to begin searching.'}
                         >
                             <SearchWatcher />
+                            <Field as={InputWithRef} name={'term'}/>
                         </FormikFieldWrapper>
                     </Form>
                 </Formik>
