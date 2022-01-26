@@ -35,7 +35,7 @@ const SearchWatcher = () => {
 
     useEffect(() => {
         submitForm();
-    }, [ values.term ]);
+    }, [values.term]);
 
     return null;
 };
@@ -61,11 +61,11 @@ export default () => {
         clearFlashes('files');
         setSelectedFiles([]);
         setDirectory(hashToPath(hash));
-    }, [ hash ]);
+    }, [hash]);
 
     useEffect(() => {
         mutate();
-    }, [ directory ]);
+    }, [directory]);
 
     const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedFiles(e.currentTarget.checked ? (files?.map(file => file.name) || []) : []);
@@ -78,13 +78,14 @@ export default () => {
     }
 
     const searchFiles = (values: Values) => {
-        if (files) {
+        if (files && values.term!=='') {
             searchString = values.term;
             sortFiles(files);
+            mutate();
         }
     };
 
-    const InputWithRef = (props: any) => <Input autoFocus {...props} ref={ref}/>;
+    const InputWithRef = (props: any) => <Input autoFocus {...props} ref={ref} />;
 
     return (
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
@@ -104,14 +105,8 @@ export default () => {
 
                 <Formik initialValues={{ term: '' } as Values} onSubmit={searchFiles}>
                     <Form>
-                        <FormikFieldWrapper
-                            name={'term'}
-                            label={'Search term'}
-                            description={'Enter file or folder name to begin searching.'}
-                        >
-                            <SearchWatcher />
-                            <Field as={InputWithRef} name={'term'}/>
-                        </FormikFieldWrapper>
+                        <SearchWatcher />
+                        <Field as={InputWithRef} name={'term'} />
                     </Form>
                 </Formik>
 
