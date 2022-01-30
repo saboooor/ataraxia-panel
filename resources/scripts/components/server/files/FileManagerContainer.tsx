@@ -43,11 +43,11 @@ export default () => {
         clearFlashes('files');
         setSelectedFiles([]);
         setDirectory(hashToPath(hash));
-    }, [ hash ]);
+    }, [hash]);
 
     useEffect(() => {
         mutate();
-    }, [ directory ]);
+    }, [directory]);
 
     const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedFiles(e.currentTarget.checked ? (files?.map(file => file.name) || []) : []);
@@ -55,7 +55,7 @@ export default () => {
 
     if (error) {
         return (
-            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()}/>
+            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />
         );
     }
 
@@ -72,6 +72,7 @@ export default () => {
             <div css={tw`flex flex-wrap-reverse md:flex-nowrap justify-center mb-4`}>
                 <ErrorBoundary>
                     <FileManagerBreadcrumbs
+                        css={tw`w-full`}
                         renderLeft={
                             <FileActionCheckbox
                                 type={'checkbox'}
@@ -81,21 +82,22 @@ export default () => {
                             />
                         }
                     />
+                    <input
+                        onChange={searchFiles}
+                        css={tw`rounded-lg bg-neutral-700 border-2 border-cyan-700 md:mx-6 w-full px-4 mb-4 md:mb-0`}
+                        placeholder='search'
+                        style={{ borderColor: 'rgb(59 130 246);' }}
+                    >
+                    </input>
                 </ErrorBoundary>
 
-                <input
-                    onChange={searchFiles}
-                    css={tw`w-full rounded-lg bg-neutral-700 border-2 border-cyan-700 mx-10 px-4`}
-                    placeholder='search'
-                    style={{ borderColor: 'rgb(59 130 246);' }}
-                >
-                </input>
+
 
                 <Can action={'file.create'}>
                     <ErrorBoundary>
                         <div css={tw`flex flex-shrink-0 flex-wrap-reverse md:flex-nowrap justify-end mb-4 md:mb-0 ml-0 md:ml-auto`}>
-                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`}/>
-                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`}/>
+                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`} />
+                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`} />
                             <NavLink
                                 to={`/server/${id}/files/new${window.location.hash}`}
                                 css={tw`flex-1 sm:flex-none sm:mt-0`}
@@ -110,7 +112,7 @@ export default () => {
             </div>
             {
                 !files ?
-                    <Spinner size={'large'} centered/>
+                    <Spinner size={'large'} centered />
                     :
                     <>
                         {!files.length ?
@@ -130,10 +132,10 @@ export default () => {
                                     }
                                     {
                                         sortFiles(files.slice(0, 250)).map(file => (
-                                            <FileObjectRow key={file.key} file={file}/>
+                                            <FileObjectRow key={file.key} file={file} />
                                         ))
                                     }
-                                    <MassActionsBar/>
+                                    <MassActionsBar />
                                 </div>
                             </CSSTransition>
                         }
