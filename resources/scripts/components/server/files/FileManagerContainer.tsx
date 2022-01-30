@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useRef } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -20,13 +20,6 @@ import { useStoreActions } from '@/state/hooks';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
-import { Field, Form, Formik, useFormikContext } from 'formik';
-import Input from '@/components/elements/Input';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-
-interface Values {
-    term: string;
-}
 
 let searchString = '';
 
@@ -50,11 +43,11 @@ export default () => {
         clearFlashes('files');
         setSelectedFiles([]);
         setDirectory(hashToPath(hash));
-    }, [hash]);
+    }, [ hash ]);
 
     useEffect(() => {
         mutate();
-    }, [directory]);
+    }, [ directory ]);
 
     const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedFiles(e.currentTarget.checked ? (files?.map(file => file.name) || []) : []);
@@ -90,7 +83,13 @@ export default () => {
                     />
                 </ErrorBoundary>
 
-                <input onChange={searchFiles} css={tw`w-full rounded-lg bg-neutral-700 border-2 border-cyan-700 mx-10 px-4`} placeholder='search' style={{borderColor: 'rgb(59 130 246);'}}></input>
+                <input
+                    onChange={searchFiles}
+                    css={tw`w-full rounded-lg bg-neutral-700 border-2 border-cyan-700 mx-10 px-4`}
+                    placeholder='search'
+                    style={{ borderColor: 'rgb(59 130 246);' }}
+                >
+                </input>
 
                 <Can action={'file.create'}>
                     <ErrorBoundary>
