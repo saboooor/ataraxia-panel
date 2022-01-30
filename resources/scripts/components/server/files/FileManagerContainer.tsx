@@ -43,11 +43,11 @@ export default () => {
         clearFlashes('files');
         setSelectedFiles([]);
         setDirectory(hashToPath(hash));
-    }, [hash]);
+    }, [ hash ]);
 
     useEffect(() => {
         mutate();
-    }, [directory]);
+    }, [ directory ]);
 
     const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedFiles(e.currentTarget.checked ? (files?.map(file => file.name) || []) : []);
@@ -90,8 +90,6 @@ export default () => {
                     >
                     </input>
                 </ErrorBoundary>
-
-
 
                 <Can action={'file.create'}>
                     <ErrorBoundary>
