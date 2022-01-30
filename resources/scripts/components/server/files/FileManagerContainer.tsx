@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useRef } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -21,8 +21,8 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 import { Field, Form, Formik, useFormikContext } from 'formik';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import Input from '@/components/elements/Input';
+import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 
 interface Values {
     term: string;
@@ -30,23 +30,12 @@ interface Values {
 
 let searchString = '';
 
-const SearchWatcher = () => {
-    const { values, submitForm } = useFormikContext<Values>();
-
-    useEffect(() => {
-        submitForm();
-    }, [values.term]);
-
-    return null;
-};
-
 const sortFiles = (files: FileObject[]): FileObject[] => {
     const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
     return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.includes(searchString));
 };
 
 export default () => {
-    const ref = useRef<HTMLInputElement>(null);
     const id = ServerContext.useStoreState(state => state.server.data!.id);
     const { hash } = useLocation();
     const { data: files, error, mutate } = useFileManagerSwr();
@@ -77,15 +66,13 @@ export default () => {
         );
     }
 
-    const searchFiles = (values: Values) => {
-        if (files && values.term!=='') {
-            searchString = values.term;
+    const searchFiles = (event: ChangeEvent<HTMLInputElement>) => {
+        if (files) {
+            searchString = event.target.value;
             sortFiles(files);
             mutate();
         }
     };
-
-    const InputWithRef = (props: any) => <Input autoFocus {...props} ref={ref} />;
 
     return (
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
@@ -103,12 +90,7 @@ export default () => {
                     />
                 </ErrorBoundary>
 
-                <Formik initialValues={{ term: '' } as Values} onSubmit={searchFiles}>
-                    <Form css={tw`w-min ml-10`}>
-                        <SearchWatcher />
-                        <Field css={tw`h-3/4 w-1/2`} as={InputWithRef} name={'term'} />
-                    </Form>
-                </Formik>
+                <input onChange={searchFiles} css={tw`w-full rounded-lg bg-neutral-700 border-2 border-cyan-700 mx-10 px-4`} placeholder='search' style={{borderColor: 'rgb(59 130 246);'}}></input>
 
                 <Can action={'file.create'}>
                     <ErrorBoundary>
