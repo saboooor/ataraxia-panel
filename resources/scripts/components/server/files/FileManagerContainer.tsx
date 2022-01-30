@@ -55,7 +55,7 @@ export default () => {
 
     if (error) {
         return (
-            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />
+            <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()}/>
         );
     }
 
@@ -94,8 +94,8 @@ export default () => {
                 <Can action={'file.create'}>
                     <ErrorBoundary>
                         <div css={tw`flex flex-shrink-0 flex-wrap-reverse md:flex-nowrap justify-end mb-4 md:mb-0 ml-0 md:ml-auto`}>
-                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`} />
-                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`} />
+                            <NewDirectoryButton css={tw`w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:mr-4`}/>
+                            <UploadButton css={tw`flex-1 mr-4 sm:flex-none sm:mt-0`}/>
                             <NavLink
                                 to={`/server/${id}/files/new${window.location.hash}`}
                                 css={tw`flex-1 sm:flex-none sm:mt-0`}
@@ -110,7 +110,7 @@ export default () => {
             </div>
             {
                 !files ?
-                    <Spinner size={'large'} centered />
+                    <Spinner size={'large'} centered/>
                     :
                     <>
                         {!files.length ?
@@ -130,10 +130,10 @@ export default () => {
                                     }
                                     {
                                         sortFiles(files.slice(0, 250)).map(file => (
-                                            <FileObjectRow key={file.key} file={file} />
+                                            <FileObjectRow key={file.key} file={file}/>
                                         ))
                                     }
-                                    <MassActionsBar />
+                                    <MassActionsBar/>
                                 </div>
                             </CSSTransition>
                         }
