@@ -78,7 +78,7 @@ class RunTaskJob extends Job implements ShouldQueue
                     $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);
                     break;
                 case Task::ACTION_WIPE:
-                    if (in_array('rust_wipe', $server->variables)) {
+                    if (in_array('rust_wipe', $server->egg->features)) {
                         $filesToDelete = collect([]);
                         collect($fileRepository->setServer($server)->getDirectory('/server/rust'))->each(function ($item, $key) use ($filesToDelete) {
                             if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.map'])) {
