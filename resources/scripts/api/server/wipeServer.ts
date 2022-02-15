@@ -9,7 +9,7 @@ export default (uuid: string, regenSeed: boolean, deleteWorld: boolean, deletePl
         loadDirectory(uuid, directory)
             .then((files) => {
                 const filesToDelete = files.filter(file => {
-                    if (deleteWorld && (file.name.endsWith('.sav') || file.name.endsWith('.map'))) {
+                    if (deleteWorld && (file.name.endsWith('.sav') || file.name.endsWith('.sav.1') || file.name.endsWith('.sav.2') || file.name.endsWith('.map'))) {
                         return true;
                     }
 

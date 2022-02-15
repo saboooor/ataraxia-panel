@@ -32,23 +32,25 @@ export default () => {
 
         sendPowerCommand('stop');
 
-        wipeServer(uuid, shouldRegenSeed, shouldDeleteWorld, shouldDeletePlayerData)
-            .then(() => {
-                addFlash({
-                    key: 'settings',
-                    type: 'success',
-                    message: 'Your server has been wiped.',
+        setTimeout(() => {
+            wipeServer(uuid, shouldRegenSeed, shouldDeleteWorld, shouldDeletePlayerData)
+                .then(() => {
+                    addFlash({
+                        key: 'settings',
+                        type: 'success',
+                        message: 'Your server has been wiped.',
+                    });
+                    sendPowerCommand('restart');
+                })
+                .catch(error => {
+                    console.error(error);
+                    addFlash({ key: 'settings', type: 'error', message: httpErrorToHuman(error) });
+                })
+                .then(() => {
+                    setIsSubmitting(false);
+                    setModalVisible(false);
                 });
-                sendPowerCommand('restart');
-            })
-            .catch(error => {
-                console.error(error);
-                addFlash({ key: 'settings', type: 'error', message: httpErrorToHuman(error) });
-            })
-            .then(() => {
-                setIsSubmitting(false);
-                setModalVisible(false);
-            });
+        }, 3000);
     };
 
     useEffect(() => {

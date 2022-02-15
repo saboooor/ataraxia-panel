@@ -81,7 +81,7 @@ class RunTaskJob extends Job implements ShouldQueue
                     if (in_array('rust_wipe', $server->egg->features)) {
                         $filesToDelete = collect([]);
                         collect($fileRepository->setServer($server)->getDirectory('/server/rust'))->each(function ($item, $key) use ($filesToDelete) {
-                            if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.map'])) {
+                            if (($this->task->payload == 'world' || $this->task->payload == 'both') && Str::endsWith($item['name'], ['.sav', '.sav.1', '.sav.2', '.map'])) {
                                 $filesToDelete->push($item['name']);
                             }
 
@@ -89,7 +89,10 @@ class RunTaskJob extends Job implements ShouldQueue
                                 $filesToDelete->push($item['name']);
                             }
                         });
-                        $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
+                        if ($filesToDelete->isNotEmpty()) {
+                            $fileRepository->setServer($server)->deleteFiles('/server/rust', $filesToDelete->toArray());
+                        }
+
                         if ($this->task->payload == 'world' || $this->task->payload == 'both') {
                             /** @var \Pterodactyl\Models\EggVariable $variable */
                             $variable = $server->variables()->where('env_variable', 'WORLD_SEED')->first();
