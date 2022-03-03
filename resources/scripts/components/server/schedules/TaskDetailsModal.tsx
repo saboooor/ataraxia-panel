@@ -53,7 +53,7 @@ const ActionListener = () => {
 
     useEffect(() => {
         if (value !== initialAction) {
-            setValue(value === 'power' ? 'start' : '');
+            setValue(value === 'power' ? 'start' : value === 'wipe' ? 'both' : '');
             setTouched(false);
         } else {
             setValue(initialPayload || '');
