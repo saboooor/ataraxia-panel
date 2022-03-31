@@ -23,7 +23,7 @@ import { hashToPath } from '@/helpers';
 
 const sortFiles = (files: FileObject[], searchString: string): FileObject[] => {
     const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
-    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.includes(searchString));
+    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.toLowerCase().includes(searchString.toLowerCase()));
 };
 
 export default () => {
