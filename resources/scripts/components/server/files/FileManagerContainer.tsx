@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -21,9 +21,7 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 
-let searchString = '';
-
-const sortFiles = (files: FileObject[]): FileObject[] => {
+const sortFiles = (files: FileObject[], searchString: string): FileObject[] => {
     const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
     return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.includes(searchString));
 };
@@ -38,6 +36,8 @@ export default () => {
 
     const setSelectedFiles = ServerContext.useStoreActions(actions => actions.files.setSelectedFiles);
     const selectedFilesLength = ServerContext.useStoreState(state => state.files.selectedFiles.length);
+
+    let [ searchString, setSearchString ] = useState("");
 
     useEffect(() => {
         clearFlashes('files');
@@ -61,8 +61,8 @@ export default () => {
 
     const searchFiles = (event: ChangeEvent<HTMLInputElement>) => {
         if (files) {
-            searchString = event.target.value;
-            sortFiles(files);
+            setSearchString(event.target.value);
+            sortFiles(files, searchString);
             mutate();
         }
     };
@@ -129,7 +129,7 @@ export default () => {
                                         </div>
                                     }
                                     {
-                                        sortFiles(files.slice(0, 250)).map(file => (
+                                        sortFiles(files.slice(0, 250), searchString).map(file => (
                                             <FileObjectRow key={file.key} file={file} />
                                         ))
                                     }
