@@ -3,7 +3,6 @@
 namespace Pterodactyl\Jobs\Schedule;
 
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Pterodactyl\Jobs\Job;
 use Carbon\CarbonImmutable;
@@ -13,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Pterodactyl\Repositories\Eloquent\ServerVariableRepository;
 use Pterodactyl\Repositories\Wings\DaemonFileRepository;
 use Pterodactyl\Services\Backups\InitiateBackupService;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
@@ -54,7 +54,8 @@ class RunTaskJob extends Job implements ShouldQueue
         DaemonCommandRepository $commandRepository,
         InitiateBackupService $backupService,
         DaemonPowerRepository $powerRepository,
-        DaemonFileRepository $fileRepository
+        DaemonFileRepository $fileRepository,
+        ServerVariableRepository $variableRepository
     ) {
         // Do not process a task that is not set to active, unless it's been manually triggered.
         if (!$this->task->schedule->is_active && !$this->manualRun) {
@@ -97,8 +98,17 @@ class RunTaskJob extends Job implements ShouldQueue
                             /** @var \Pterodactyl\Models\EggVariable $variable */
                             $variable = $server->variables()->where('env_variable', 'WORLD_SEED')->first();
                             if ($variable) {
+                                $newSeed = strval(mt_rand(132132, 132132132));
+
+                                $variableRepository->updateOrCreate([
+                                    'server_id' => $server->id,
+                                    'variable_id' => $variable->id,
+                                ], [
+                                    'variable_value' => $newSeed,
+                                ]);
+
                                 $variable = $variable->refresh();
-                                $variable->server_value = strval(mt_rand(132132, 132132132));
+                                $variable->server_value = $newSeed;
                             }
                         }
                     }
