@@ -45,7 +45,7 @@
                             <td>{{ $database->database }}</td>
                             <td>{{ $database->username }}</td>
                             <td>{{ $database->remote }}</td>
-                            <td><code>{{ $database->host->host }}:{{ $database->host->port }}</code></td>
+                            <td><code>{{ $database->host->getAliasAttribute() }}:{{ $database->host->port }}</code></td>
                             @if($database->max_connections != null)
                                 <td>{{ $database->max_connections }}</td>
                             @else
