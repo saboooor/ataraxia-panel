@@ -33,7 +33,7 @@ interface Values {
 }
 
 const schema = object().shape({
-    action: string().required().oneOf([ 'command', 'power', 'backup' ]),
+    action: string().required().oneOf([ 'command', 'power', 'backup', 'delete_files' ]),
     payload: string().when('action', {
         is: v => v !== 'backup',
         then: string().required('A task payload must be provided.'),
@@ -125,6 +125,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
+                                    <option value={'delete_files'}>Delete files</option>
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
@@ -158,15 +159,26 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     </FormikFieldWrapper>
                                 </div>
                                 :
-                                <div>
-                                    <Label>Ignored Files</Label>
-                                    <FormikFieldWrapper
-                                        name={'payload'}
-                                        description={'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .pteroignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'}
-                                    >
-                                        <FormikField as={Textarea} name={'payload'} rows={6}/>
-                                    </FormikFieldWrapper>
-                                </div>
+                                values.action === 'backup' ?
+                                    <div>
+                                        <Label>Ignored Files</Label>
+                                        <FormikFieldWrapper
+                                            name={'payload'}
+                                            description={'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .pteroignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'}
+                                        >
+                                            <FormikField as={Textarea} name={'payload'} rows={6}/>
+                                        </FormikFieldWrapper>
+                                    </div>
+                                    :
+                                    <div>
+                                        <Label>Files to delete</Label>
+                                        <FormikFieldWrapper
+                                            name={'payload'}
+                                            description={'Specify the files that will be deleted. (Whitelist)'}
+                                        >
+                                            <FormikField as={Textarea} name={'payload'} rows={6}/>
+                                        </FormikFieldWrapper>
+                                    </div>
                         }
                     </div>
                     <div css={tw`mt-6 bg-neutral-700 border border-neutral-800 shadow-inner p-4 rounded`}>
