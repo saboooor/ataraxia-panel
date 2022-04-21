@@ -85,7 +85,7 @@ export default () => {
                     <input
                         onChange={searchFiles}
                         css={tw`rounded-lg bg-neutral-700 border-2 border-cyan-700 md:mx-6 w-full px-4 mb-4 md:mb-0`}
-                        placeholder='search'
+                        placeholder='Search'
                         style={{ borderColor: 'rgb(59 130 246);' }}
                     >
                     </input>
