@@ -9,7 +9,7 @@ return [
     | change this value if you are not maintaining your own internal versions.
     */
 
-    'version' => 'canary',
+    'version' => '1.8.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -173,6 +173,7 @@ return [
         /*
          * Application Service Providers...
          */
+        Pterodactyl\Providers\ActivityLogServiceProvider::class,
         Pterodactyl\Providers\AppServiceProvider::class,
         Pterodactyl\Providers\AuthServiceProvider::class,
         Pterodactyl\Providers\BackupsServiceProvider::class,
