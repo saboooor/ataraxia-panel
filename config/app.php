@@ -9,7 +9,7 @@ return [
     | change this value if you are not maintaining your own internal versions.
     */
 
-    'version' => '1.7.0',
+    'version' => '1.8.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -173,6 +173,7 @@ return [
         /*
          * Application Service Providers...
          */
+        Pterodactyl\Providers\ActivityLogServiceProvider::class,
         Pterodactyl\Providers\AppServiceProvider::class,
         Pterodactyl\Providers\AuthServiceProvider::class,
         Pterodactyl\Providers\BackupsServiceProvider::class,
