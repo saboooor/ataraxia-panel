@@ -9,12 +9,12 @@ use Pterodactyl\Models\User;
 use InvalidArgumentException;
 use Pterodactyl\Models\Backup;
 use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Subuser;
 use Pterodactyl\Models\Database;
 use Pterodactyl\Models\Location;
 use Pterodactyl\Models\Schedule;
 use Illuminate\Support\Collection;
 use Pterodactyl\Models\Allocation;
+use Pterodactyl\Models\UserSSHKey;
 use Pterodactyl\Models\DatabaseHost;
 use Pterodactyl\Tests\Integration\TestResponse;
 use Pterodactyl\Tests\Integration\IntegrationTestCase;
@@ -77,38 +77,14 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
             case Backup::class:
                 $link = "/api/client/servers/{$model->server->uuid}/backups/{$model->uuid}";
                 break;
+            case UserSSHKey::class:
+                $link = "/api/client/account/ssh-keys/$model->fingerprint";
+                break;
             default:
                 throw new InvalidArgumentException(sprintf('Cannot create link for Model of type %s', class_basename($model)));
         }
 
         return $link . ($append ? '/' . ltrim($append, '/') : '');
-    }
-
-    /**
-     * Generates a user and a server for that user. If an array of permissions is passed it
-     * is assumed that the user is actually a subuser of the server.
-     *
-     * @param string[] $permissions
-     */
-    protected function generateTestAccount(array $permissions = []): array
-    {
-        /** @var \Pterodactyl\Models\User $user */
-        $user = User::factory()->create();
-
-        if (empty($permissions)) {
-            return [$user, $this->createServerModel(['user_id' => $user->id])];
-        }
-
-        /** @var \Pterodactyl\Models\Server $server */
-        $server = $this->createServerModel();
-
-        Subuser::query()->create([
-            'user_id' => $user->id,
-            'server_id' => $server->id,
-            'permissions' => $permissions,
-        ]);
-
-        return [$user, $server];
     }
 
     /**
