@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { store } from '@/state';
 
 const http: AxiosInstance = axios.create({
+    withCredentials: true,
     timeout: 20000,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -11,19 +12,7 @@ const http: AxiosInstance = axios.create({
 });
 
 http.interceptors.request.use(req => {
-    const cookies = document.cookie.split(';').reduce((obj, val) => {
-        const [ key, value ] = val.trim().split('=').map(decodeURIComponent);
-
-        return { ...obj, [key]: value };
-    }, {} as Record<string, string>);
-
-    req.headers['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN'] || 'nil';
-
-    return req;
-});
-
-http.interceptors.request.use(req => {
-    if (!req.url?.endsWith('/resources') && (req.url?.indexOf('_debugbar') || -1) < 0) {
+    if (!req.url?.endsWith('/resources')) {
         store.getActions().progress.startContinuous();
     }
 
@@ -31,7 +20,7 @@ http.interceptors.request.use(req => {
 });
 
 http.interceptors.response.use(resp => {
-    if (!resp.request?.url?.endsWith('/resources') && (resp.request?.url?.indexOf('_debugbar') || -1) < 0) {
+    if (!resp.request?.url?.endsWith('/resources')) {
         store.getActions().progress.setComplete();
     }
 
@@ -41,18 +30,6 @@ http.interceptors.response.use(resp => {
 
     throw error;
 });
-
-// If we have a phpdebugbar instance registered at this point in time go
-// ahead and route the response data through to it so things show up.
-// @ts-ignore
-if (typeof window.phpdebugbar !== 'undefined') {
-    http.interceptors.response.use(response => {
-        // @ts-ignore
-        window.phpdebugbar.ajaxHandler.handle(response.request);
-
-        return response;
-    });
-}
 
 export default http;
 
@@ -91,7 +68,7 @@ export interface FractalResponseData {
     object: string;
     attributes: {
         [k: string]: any;
-        relationships?: Record<string, FractalResponseData | FractalResponseList>;
+        relationships?: Record<string, FractalResponseData | FractalResponseList | null | undefined>;
     };
 }
 
@@ -100,12 +77,26 @@ export interface FractalResponseList {
     data: FractalResponseData[];
 }
 
+export interface FractalPaginatedResponse extends FractalResponseList {
+    meta: {
+        pagination: {
+            total: number;
+            count: number;
+            /* eslint-disable camelcase */
+            per_page: number;
+            current_page: number;
+            total_pages: number;
+            /* eslint-enable camelcase */
+        };
+    }
+}
+
 export interface PaginatedResult<T> {
     items: T[];
     pagination: PaginationDataSet;
 }
 
-interface PaginationDataSet {
+export interface PaginationDataSet {
     total: number;
     count: number;
     perPage: number;
@@ -122,3 +113,45 @@ export function getPaginationSet (data: any): PaginationDataSet {
         totalPages: data.total_pages,
     };
 }
+
+type QueryBuilderFilterValue = string | number | boolean | null;
+
+export interface QueryBuilderParams<FilterKeys extends string = string, SortKeys extends string = string> {
+    page?: number;
+    filters?: {
+        [K in FilterKeys]?: QueryBuilderFilterValue | Readonly<QueryBuilderFilterValue[]>;
+    };
+    sorts?: {
+        [K in SortKeys]?: -1 | 0 | 1 | 'asc' | 'desc' | null;
+    };
+}
+
+/**
+ * Helper function that parses a data object provided and builds query parameters
+ * for the Laravel Query Builder package automatically. This will apply sorts and
+ * filters deterministically based on the provided values.
+ */
+export const withQueryBuilderParams = (data?: QueryBuilderParams): Record<string, unknown> => {
+    if (!data) return {};
+
+    const filters = Object.keys(data.filters || {}).reduce((obj, key) => {
+        const value = data.filters?.[key];
+
+        return !value || value === '' ? obj : { ...obj, [`filter[${key}]`]: value };
+    }, {} as NonNullable<QueryBuilderParams['filters']>);
+
+    const sorts = Object.keys(data.sorts || {}).reduce((arr, key) => {
+        const value = data.sorts?.[key];
+        if (!value || ![ 'asc', 'desc', 1, -1 ].includes(value)) {
+            return arr;
+        }
+
+        return [ ...arr, (value === -1 || value === 'desc' ? '-' : '') + key ];
+    }, [] as string[]);
+
+    return {
+        ...filters,
+        sort: !sorts.length ? undefined : sorts.join(','),
+        page: data.page,
+    };
+};

@@ -9,10 +9,13 @@ import AuthenticationRouter from '@/routers/AuthenticationRouter';
 import { SiteSettings } from '@/state/settings';
 import ProgressBar from '@/components/elements/ProgressBar';
 import { NotFound } from '@/components/elements/ScreenBlock';
-import tw, { GlobalStyles as TailwindGlobalStyles } from 'twin.macro';
+import tw from 'twin.macro';
 import GlobalStylesheet from '@/assets/css/GlobalStylesheet';
 import { history } from '@/components/history';
 import { setupInterceptors } from '@/api/interceptors';
+import AuthenticatedRoute from '@/components/elements/AuthenticatedRoute';
+import { ServerContext } from '@/state/server';
+import '@/assets/tailwind.css';
 
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
@@ -54,16 +57,25 @@ const App = () => {
     return (
         <>
             <GlobalStylesheet/>
-            <TailwindGlobalStyles/>
             <StoreProvider store={store}>
                 <ProgressBar/>
                 <div css={tw`mx-auto w-auto`}>
                     <Router history={history}>
                         <Switch>
-                            <Route path="/server/:id" component={ServerRouter}/>
-                            <Route path="/auth" component={AuthenticationRouter}/>
-                            <Route path="/" component={DashboardRouter}/>
-                            <Route path={'*'} component={NotFound}/>
+                            <Route path={'/auth'}>
+                                <AuthenticationRouter/>
+                            </Route>
+                            <AuthenticatedRoute path={'/server/:id'}>
+                                <ServerContext.Provider>
+                                    <ServerRouter/>
+                                </ServerContext.Provider>
+                            </AuthenticatedRoute>
+                            <AuthenticatedRoute path={'/'}>
+                                <DashboardRouter/>
+                            </AuthenticatedRoute>
+                            <Route path={'*'}>
+                                <NotFound/>
+                            </Route>
                         </Switch>
                     </Router>
                 </div>
