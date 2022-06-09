@@ -37,7 +37,7 @@ export default () => {
     const setSelectedFiles = ServerContext.useStoreActions(actions => actions.files.setSelectedFiles);
     const selectedFilesLength = ServerContext.useStoreState(state => state.files.selectedFiles.length);
 
-    let [ searchString, setSearchString ] = useState("");
+    const [ searchString, setSearchString ] = useState('');
 
     useEffect(() => {
         clearFlashes('files');
@@ -84,11 +84,12 @@ export default () => {
                     />
                     <input
                         onChange={searchFiles}
-                        css={tw`rounded-lg bg-neutral-700 border-2 border-cyan-700 md:mx-6 w-full px-4 mb-4 md:mb-0`}
+                        css={tw`rounded-lg bg-neutral-700 focus:border focus:border-blue-200 focus:ring-1 focus:ring-blue-400 md:mx-6 w-full px-4 mb-4 md:mb-0`}
                         placeholder='Search'
-                        style={{ borderColor: 'rgb(59 130 246);' }}
+
                     >
                     </input>
+
                 </ErrorBoundary>
 
                 <Can action={'file.create'}>
