@@ -144,14 +144,8 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                         : 'No disk space limit has been configured for this server.'
                 }
             >
-                {status === 'offline' ? (
-                    <span className={'text-gray-400'}>Offline</span>
-                ) : (
-                    <>
-                        {bytesToString(stats.disk)}
-                        <span css={tw`text-gray-400`}> / {diskLimit}</span>
-                    </>
-                )}
+                {bytesToString(stats.disk)}
+                <span css={tw`text-gray-400`}> / {diskLimit}</span>
             </StatBlock>
             <StatBlock
                 icon={faCloudDownloadAlt}
