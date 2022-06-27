@@ -14,7 +14,7 @@ class DeleteFilesService
     private $daemonFileRepository;
 
     /**
-     * WipeService constructor.
+     * DeleteFilesService constructor.
      */
     public function __construct(DaemonFileRepository $daemonFileRepository) {
         $this->daemonFileRepository = $daemonFileRepository;
