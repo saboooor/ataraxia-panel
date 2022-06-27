@@ -15,6 +15,7 @@ import UptimeDuration from '@/components/server/UptimeDuration';
 import StatBlock from '@/components/server/console/StatBlock';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import classNames from 'classnames';
+import tw from 'twin.macro';
 
 type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
 
@@ -35,6 +36,8 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
     const [stats, setStats] = useState<Stats>({ memory: 0, cpu: 0, disk: 0, uptime: 0, tx: 0, rx: 0 });
 
     const status = ServerContext.useStoreState((state) => state.status.value);
+    const isInstalling = ServerContext.useStoreState((state) => state.server.data!.isInstalling);
+    const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
     const connected = ServerContext.useStoreState((state) => state.socket.connected);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
     const limits = ServerContext.useStoreState((state) => state.server.data!.limits);
@@ -43,6 +46,10 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
 
         return !match ? 'n/a' : `${match.alias || ip(match.ip)}:${match.port}`;
     });
+
+    const diskLimit = limits.disk ? bytesToString(mbToBytes(limits.disk)) : 'Unlimited';
+    const memoryLimit = limits.memory ? bytesToString(mbToBytes(limits.memory)) : 'Unlimited';
+    const cpuLimit = limits.cpu ? limits.cpu.toFixed(2) + '%' : 'Unlimited';
 
     useEffect(() => {
         if (!connected || !instance) {
@@ -72,15 +79,22 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
 
     return (
         <div className={classNames('grid grid-cols-6 gap-2 md:gap-4', className)}>
-            <StatBlock icon={faWifi} title={'Address'}>
-                {allocation}
-            </StatBlock>
             <StatBlock
                 icon={faClock}
-                title={'Uptime'}
-                color={getBackgroundColor(status === 'running' ? 0 : status !== 'offline' ? 9 : 10, 10)}
+                title={'Status'}
+                color={status === 'running' ? 'bg-green-500' : status === 'offline' ? 'bg-red-500' : 'bg-yellow-500'}
             >
-                {stats.uptime > 0 ? <UptimeDuration uptime={stats.uptime / 1000} /> : 'Offline'}
+                <span css={tw`uppercase`}>
+                    {!status ? 'Connecting...' : isInstalling ? 'Installing' : isTransferring ? 'Transferring' : status}
+                </span>
+                {stats.uptime > 0 && (
+                    <span css={tw`ml-2`}>
+                        (<UptimeDuration uptime={stats.uptime / 1000} />)
+                    </span>
+                )}
+            </StatBlock>
+            <StatBlock icon={faWifi} title={'Address'}>
+                {allocation}
             </StatBlock>
             <StatBlock
                 icon={faMicrochip}
@@ -88,11 +102,18 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                 color={getBackgroundColor(stats.cpu, limits.cpu)}
                 description={
                     limits.cpu
-                        ? `This server is allowed to use up to ${limits.cpu}% of the host's available CPU resources.`
+                        ? `This server is allowed to use up to ${cpuLimit} of the host's available CPU resources.`
                         : 'No CPU limit has been configured for this server.'
                 }
             >
-                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : `${stats.cpu.toFixed(2)}%`}
+                {status === 'offline' ? (
+                    <span className={'text-gray-400'}>Offline</span>
+                ) : (
+                    <>
+                        {`${stats.cpu.toFixed(2)}%`}
+                        <span css={tw`text-gray-400`}> / {cpuLimit}</span>
+                    </>
+                )}
             </StatBlock>
             <StatBlock
                 icon={faMemory}
@@ -100,11 +121,18 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                 color={getBackgroundColor(stats.memory / 1024, limits.memory * 1024)}
                 description={
                     limits.memory
-                        ? `This server is allowed to use up to ${bytesToString(mbToBytes(limits.memory))} of memory.`
+                        ? `This server is allowed to use up to ${memoryLimit} of memory.`
                         : 'No memory limit has been configured for this server.'
                 }
             >
-                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : bytesToString(stats.memory)}
+                {status === 'offline' ? (
+                    <span className={'text-gray-400'}>Offline</span>
+                ) : (
+                    <>
+                        {bytesToString(stats.memory)}
+                        <span css={tw`text-gray-400`}> / {memoryLimit}</span>
+                    </>
+                )}
             </StatBlock>
             <StatBlock
                 icon={faHdd}
@@ -112,18 +140,25 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                 color={getBackgroundColor(stats.disk / 1024, limits.disk * 1024)}
                 description={
                     limits.disk
-                        ? `This server is allowed to use up to ${bytesToString(mbToBytes(limits.disk))} of disk space.`
+                        ? `This server is allowed to use up to ${diskLimit} of disk space.`
                         : 'No disk space limit has been configured for this server.'
                 }
             >
-                {bytesToString(stats.disk)}
+                {status === 'offline' ? (
+                    <span className={'text-gray-400'}>Offline</span>
+                ) : (
+                    <>
+                        {bytesToString(stats.disk)}
+                        <span css={tw`text-gray-400`}> / {diskLimit}</span>
+                    </>
+                )}
             </StatBlock>
             <StatBlock
                 icon={faCloudDownloadAlt}
                 title={'Network (Inbound)'}
-                description={'The total amount of network traffic that your server has recieved since it was started.'}
+                description={'The total amount of network traffic that your server has received since it was started.'}
             >
-                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : bytesToString(stats.tx)}
+                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : bytesToString(stats.rx)}
             </StatBlock>
             <StatBlock
                 icon={faCloudUploadAlt}
@@ -132,7 +167,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                     'The total amount of traffic your server has sent across the internet since it was started.'
                 }
             >
-                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : bytesToString(stats.rx)}
+                {status === 'offline' ? <span className={'text-gray-400'}>Offline</span> : bytesToString(stats.tx)}
             </StatBlock>
         </div>
     );
