@@ -14,7 +14,6 @@ export default ({ className }: PowerButtonProps) => {
     const status = ServerContext.useStoreState((state) => state.status.value);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
 
-    const killable = status === 'stopping';
     const onButtonClick = (
         action: PowerAction | 'kill-confirmed',
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -70,9 +69,16 @@ export default ({ className }: PowerButtonProps) => {
                 <Button.Danger
                     className={'w-full sm:w-24'}
                     disabled={status === 'offline'}
-                    onClick={onButtonClick.bind(this, killable ? 'kill' : 'stop')}
+                    onClick={onButtonClick.bind(this, 'stop')}
                 >
-                    {killable ? 'Kill' : 'Stop'}
+                    Stop
+                </Button.Danger>
+                <Button.Danger
+                    className={'w-full sm:w-24'}
+                    disabled={status === 'offline'}
+                    onClick={onButtonClick.bind(this, 'kill')}
+                >
+                    Kill
                 </Button.Danger>
             </Can>
         </div>
