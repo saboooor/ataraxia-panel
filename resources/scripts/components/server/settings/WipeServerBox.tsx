@@ -7,9 +7,9 @@ import { Actions, useStoreActions } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
 import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
+import { Button } from '@/components/elements/button/index';
 import Switch from '@/components/elements/Switch';
-import { PowerAction } from '@/components/server/ServerConsole';
+import { PowerAction } from '@/components/server/console/ServerConsoleContainer';
 
 export default () => {
     const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
@@ -95,14 +95,9 @@ export default () => {
                 </div>
             </div>
             <div css={tw`mt-6 text-right`}>
-                <Button
-                    type={'button'}
-                    color={'red'}
-                    isSecondary
-                    onClick={() => setModalVisible(true)}
-                >
+                <Button.Danger variant={Button.Variants.Secondary} onClick={() => setModalVisible(true)}>
                     Wipe Server
-                </Button>
+                </Button.Danger>
             </div>
         </TitledGreyBox>
     );
