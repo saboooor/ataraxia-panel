@@ -16,6 +16,7 @@ import StatBlock from '@/components/server/console/StatBlock';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import classNames from 'classnames';
 import tw from 'twin.macro';
+import { capitalize } from '@/lib/strings';
 
 type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
 
@@ -97,7 +98,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
                 color={status === 'running' ? 'bg-green-500' : status === 'offline' ? 'bg-red-500' : 'bg-yellow-500'}
             >
                 <span css={tw`uppercase`}>
-                    {!status ? 'Connecting...' : isTransferring ? 'Transferring' : status}
+                    {!status ? 'Connecting...' : isTransferring ? 'Transferring' : capitalize(status)}
                 </span>
                 {stats.uptime > 0 && (
                     <span css={tw`ml-2`}>
