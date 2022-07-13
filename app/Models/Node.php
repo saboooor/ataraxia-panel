@@ -3,6 +3,7 @@
 namespace Pterodactyl\Models;
 
 use Illuminate\Support\Str;
+use Pterodactyl\Http\Controllers\Admin\Nodes\SystemInformationController;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Container\Container;
 use Illuminate\Notifications\Notifiable;
@@ -249,5 +250,12 @@ class Node extends Model
         $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
 
         return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit;
+    }
+
+    public function cpu(): int
+    {
+        return app()->call(SystemInformationController::class . '@__invoke', [
+            'node' => $this,
+        ])->getData()->system->cpus * 100;
     }
 }
