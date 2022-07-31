@@ -1,20 +1,36 @@
-.wrapper {
-  @apply fixed z-10 inset-0 overflow-y-auto;
-}
-
-.overlay {
-  @apply fixed inset-0 bg-gray-900 opacity-50;
-}
-
 .container {
-  @apply relative bg-gray-600 rounded max-w-xl w-full mx-auto shadow-lg;
-  @apply ring-4 ring-gray-800 ring-opacity-80;
+    @apply flex min-h-full items-center justify-center p-4 text-center;
+}
 
-  & .title {
-    @apply font-header text-xl font-medium mb-2 text-white pr-4;
-  }
+.panel {
+    @apply relative bg-gray-600 rounded max-w-xl w-full mx-auto shadow-lg text-left;
+    @apply ring-4 ring-gray-800 ring-opacity-80;
+}
 
-  & > .button_bar {
-    @apply px-6 py-3 bg-gray-700 flex items-center justify-end space-x-3 rounded-b;
-  }
+.title {
+    @apply font-header text-xl font-medium mb-2 text-gray-50 pr-4;
+}
+
+.close_icon {
+    @apply w-5 h-5 group-hover:rotate-90 transition-transform duration-100;
+}
+
+.dialog_icon {
+    @apply flex items-center justify-center w-10 h-10 rounded-full mr-4;
+
+    &.danger {
+        @apply bg-red-500 text-red-50;
+    }
+
+    &.warning {
+        @apply bg-yellow-600 text-yellow-50;
+    }
+
+    &.success {
+        @apply bg-green-600 text-green-50;
+    }
+
+    &.info {
+        @apply bg-primary-500 text-primary-50;
+    }
 }
