@@ -22,6 +22,7 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 import style from './style.module.css';
+import Input from '@/components/elements/Input';
 
 
 const sortFiles = (files: FileObject[], searchString: string): FileObject[] => {
@@ -83,20 +84,20 @@ export default () => {
                             />
                         }
                     />
-                  <input
+                    <Input
                         onChange={searchFiles}
-                        css={tw`rounded-lg bg-neutral-700 focus:border focus:border-blue-200 focus:ring-1 focus:ring-blue-400 md:mx-6 w-full px-4 mb-4 md:mb-0`}
+                        css={tw`md:mx-6 w-full px-4 mb-4 md:mb-0`}
                         placeholder='Search'
 
                     >
-                    </input>
+                    </Input>
                     <Can action={'file.create'}>
                         <div className={style.manager_actions}>
                             <FileManagerStatus />
-                            <NewDirectoryButton />
+                            <NewDirectoryButton css={tw`whitespace-nowrap`} />
                             <UploadButton />
                             <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
-                                <Button>New File</Button>
+                                <Button css={tw`whitespace-nowrap h-full`}>New File</Button>
                             </NavLink>
                         </div>
                     </Can>
