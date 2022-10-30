@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $name
  * @property string $host
+ * @property string|null $host_alias
  * @property int $port
  * @property string $username
  * @property string $password
@@ -41,7 +42,7 @@ class DatabaseHost extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases', 'node_id',
+        'name', 'host', 'host_alias', 'port', 'username', 'password', 'max_databases', 'node_id',
     ];
 
     /**
@@ -59,11 +60,32 @@ class DatabaseHost extends Model
     public static array $validationRules = [
         'name' => 'required|string|max:191',
         'host' => 'required|string',
+        'host_alias' => 'nullable|string',
         'port' => 'required|numeric|between:1,65535',
         'username' => 'required|string|max:32',
         'password' => 'nullable|string',
         'node_id' => 'sometimes|nullable|integer|exists:nodes,id',
     ];
+
+    /**
+     * Accessor to automatically provide the host alias if defined.
+     *
+     * @return string
+     */
+    public function getAliasAttribute()
+    {
+        return (is_null($this->host_alias)) ? $this->host : $this->host_alias;
+    }
+
+    /**
+     * Accessor to quickly determine if this allocation has an alias.
+     *
+     * @return bool
+     */
+    public function getHasAliasAttribute()
+    {
+        return !is_null($this->host_alias);
+    }
 
     /**
      * Gets the node associated with a database host.

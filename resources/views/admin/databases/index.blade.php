@@ -29,6 +29,7 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Host</th>
+                            <th>Alias</th>
                             <th>Port</th>
                             <th>Username</th>
                             <th class="text-center">Databases</th>
@@ -39,6 +40,13 @@
                                 <td><code>{{ $host->id }}</code></td>
                                 <td><a href="{{ route('admin.databases.view', $host->id) }}">{{ $host->name }}</a></td>
                                 <td><code>{{ $host->host }}</code></td>
+                                <td>
+                                    @if(! is_null($host->host_alias))
+                                        <code>{{ $host->host_alias }}</code>
+                                    @else
+                                        <code>None</code>
+                                    @endif
+                                </td>
                                 <td><code>{{ $host->port }}</code></td>
                                 <td>{{ $host->username }}</td>
                                 <td class="text-center">{{ $host->databases_count }}</td>
@@ -77,6 +85,13 @@
                             <input type="text" name="host" id="pHost" class="form-control" />
                             <p class="text-muted small">The IP address or FQDN that should be used when attempting to connect to this MySQL host <em>from the panel</em> to add new databases.</p>
                         </div>
+                        <div class="col-md-6">
+                            <label for="pHostAlias" class="form-label">Alias</label>
+                            <input type="text" name="host_alias" id="pHostAlias" class="form-control"/>
+                            <p class="text-muted small">The alias is used for display instead of the host. Can be empty.</p>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <label for="pPort" class="form-label">Port</label>
                             <input type="text" name="port" id="pPort" class="form-control" value="3306"/>

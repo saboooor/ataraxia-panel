@@ -32,6 +32,11 @@
                         <p class="text-muted small">The IP address or FQDN that should be used when attempting to connect to this MySQL host <em>from the panel</em> to add new databases.</p>
                     </div>
                     <div class="form-group">
+                        <label for="pHostAlias" class="form-label">Alias</label>
+                        <input type="text" id="pHostAlias" name="host_alias" class="form-control" value="{{ old('host_alias', $host->host_alias) }}" />
+                        <p class="text-muted small">The alias is used for display instead of the host. Can be empty.</p>
+                    </div>
+                    <div class="form-group">
                         <label for="pPort" class="form-label">Port</label>
                         <input type="text" id="pPort" name="port" class="form-control" value="{{ old('port', $host->port) }}" />
                         <p class="text-muted small">The port that MySQL is running on for this host.</p>

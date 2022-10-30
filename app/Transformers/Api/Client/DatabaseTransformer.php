@@ -39,6 +39,7 @@ class DatabaseTransformer extends BaseClientTransformer
             'id' => $this->hashids->encode($model->id),
             'host' => [
                 'address' => $model->getRelation('host')->host,
+                'alias' => $model->getRelation('host')->host_alias,
                 'port' => $model->getRelation('host')->port,
             ],
             'name' => $model->database,
