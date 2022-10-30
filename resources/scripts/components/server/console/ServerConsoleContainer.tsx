@@ -15,6 +15,7 @@ export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
 const ServerConsoleContainer = () => {
     const name = ServerContext.useStoreState((state) => state.server.data!.name);
+    const icon = ServerContext.useStoreState((state) => state.server.data!.icon);
     const description = ServerContext.useStoreState((state) => state.server.data!.description);
     const isInstalling = ServerContext.useStoreState((state) => state.server.isInstalling);
     const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
@@ -30,9 +31,24 @@ const ServerConsoleContainer = () => {
                 </Alert>
             )}
             <div className={'grid grid-cols-4 gap-4 mb-4'}>
-                <div className={'hidden sm:block sm:col-span-2 lg:col-span-3 pr-4'}>
-                    <h1 className={'font-header text-2xl text-gray-50 leading-relaxed line-clamp-1'}>{name}</h1>
-                    <p className={'text-sm line-clamp-2'}>{description}</p>
+                <div className={'flex col-span-4 sm:col-span-2 lg:col-span-3 pr-4 items-center'}>
+                    {!!icon && (
+                        <img
+                            src={icon}
+                            className={'mx-5'}
+                            style={{
+                                minHeight: '50px',
+                                height: '50px',
+                                minWidth: '50px',
+                                width: '50px',
+                                borderRadius: '5px',
+                            }}
+                        />
+                    )}
+                    <div className={'block'}>
+                        <h1 className={'font-header text-2xl text-gray-50 leading-relaxed line-clamp-1'}>{name}</h1>
+                        <p className={'text-sm line-clamp-2'}>{description}</p>
+                    </div>
                 </div>
                 <div className={'col-span-4 sm:col-span-2 lg:col-span-1 self-end'}>
                     <Can action={['control.start', 'control.stop', 'control.restart']} matchAny>

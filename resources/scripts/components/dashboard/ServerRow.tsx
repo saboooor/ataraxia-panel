@@ -92,7 +92,19 @@ export default ({ server, className }: { server: Server; className?: string }) =
         <StatusIndicatorBox as={Link} to={`/server/${server.id}`} className={className} $status={stats?.status}>
             <div css={tw`flex items-center col-span-12 sm:col-span-5 lg:col-span-6`}>
                 <div className={'icon mr-4'}>
-                    <FontAwesomeIcon icon={faServer} />
+                    {!!server.icon && (
+                        <img
+                            src={server.icon}
+                            style={{
+                                minHeight: '35px',
+                                height: '35px',
+                                minWidth: '35px',
+                                width: '35px',
+                                borderRadius: '5px',
+                            }}
+                        />
+                    )}
+                    {!server.icon && <FontAwesomeIcon icon={faServer} style={{ fontSize: '35px' }} />}
                 </div>
                 <div>
                     <p css={tw`text-lg break-words`}>{server.name}</p>
