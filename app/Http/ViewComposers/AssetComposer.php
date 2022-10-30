@@ -22,6 +22,8 @@ class AssetComposer
         $view->with('asset', $this->assetHashService);
         $view->with('siteConfiguration', [
             'name' => config('app.name') ?? 'Pterodactyl',
+            'icon' => config('app.icon') ?? 'https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png',
+            'logo' => config('app.logo') ?? 'https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/netherdepths.png',
             'locale' => config('app.locale') ?? 'en',
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),

@@ -32,6 +32,20 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
+                                <label class="control-label">Company Icon URL</label>
+                                <div>
+                                    <input type="text" class="form-control" name="app:icon" value="{{ old('app:icon', config('app.icon')) }}" />
+                                    <p class="text-muted"><small>This is the icon that is everywhere except the navigation bar. Recommended aspect ratio is square.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Company Logo URL</label>
+                                <div>
+                                    <input type="text" class="form-control" name="app:logo" value="{{ old('app:logo', config('app.logo')) }}" />
+                                    <p class="text-muted"><small>This is the logo that is on the navigation bar.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label class="control-label">Require 2-Factor Authentication</label>
                                 <div>
                                     <div class="btn-group" data-toggle="buttons">

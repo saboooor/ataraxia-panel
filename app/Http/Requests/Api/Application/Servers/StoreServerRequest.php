@@ -25,6 +25,7 @@ class StoreServerRequest extends ApplicationApiRequest
         return [
             'external_id' => $rules['external_id'],
             'name' => $rules['name'],
+            'icon' => array_merge(['nullable'], $rules['icon']),
             'description' => array_merge(['nullable'], $rules['description']),
             'user' => $rules['owner_id'],
             'egg' => $rules['egg_id'],
@@ -75,6 +76,7 @@ class StoreServerRequest extends ApplicationApiRequest
         return [
             'external_id' => array_get($data, 'external_id'),
             'name' => array_get($data, 'name'),
+            'icon' => array_get($data, 'icon'),
             'description' => array_get($data, 'description'),
             'owner_id' => array_get($data, 'user'),
             'egg_id' => array_get($data, 'egg'),

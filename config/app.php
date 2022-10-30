@@ -27,6 +27,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Icon
+    |--------------------------------------------------------------------------
+    |
+    | This value is the icon of your application. This value is used in square areas.
+    */
+
+    'icon' => env('APP_ICON', 'https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Logo
+    |--------------------------------------------------------------------------
+    |
+    | This value is the icon of your application. This value is used in rectangular areas.
+    */
+
+    'logo' => env('APP_LOGO', 'https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/netherdepths.png'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

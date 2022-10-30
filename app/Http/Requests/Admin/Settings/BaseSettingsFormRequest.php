@@ -14,6 +14,8 @@ class BaseSettingsFormRequest extends AdminFormRequest
     {
         return [
             'app:name' => 'required|string|max:191',
+            'app:icon' => 'required|string',
+            'app:logo' => 'string|nullable',
             'pterodactyl:auth:2fa_required' => 'required|integer|in:0,1,2',
             'app:locale' => ['required', 'string', Rule::in(array_keys($this->getAvailableLanguages()))],
         ];
@@ -23,6 +25,8 @@ class BaseSettingsFormRequest extends AdminFormRequest
     {
         return [
             'app:name' => 'Company Name',
+            'app:icon' => 'Icon Image URL',
+            'app:logo' => 'Logo Image URL',
             'pterodactyl:auth:2fa_required' => 'Require 2-Factor Authentication',
             'app:locale' => 'Default Language',
         ];
