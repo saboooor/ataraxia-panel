@@ -93,7 +93,7 @@ export default () => {
                         <p css={tw`text-sm text-neutral-400 text-center`}>This directory seems to be empty.</p>
                     ) : (
                         <CSSTransition classNames={'fade'} timeout={150} appear in>
-                            <div>
+                            <div css={tw`rounded-lg overflow-hidden`}>
                                 {files.length > 250 && (
                                     <div css={tw`rounded-lg bg-yellow-400 mb-px p-3`}>
                                         <p css={tw`text-yellow-900 text-sm text-center`}>
