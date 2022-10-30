@@ -127,6 +127,18 @@
                         </div>
                     </div>
                     <div class="col-sm-12">
+                        <div class="info-box bg-{{ $stats['cpu']['css'] }}">
+                            <span class="info-box-icon"><i class="ion ion-ios-barcode-outline"></i></span>
+                            <div class="info-box-content" style="padding: 15px 10px 0;">
+                                <span class="info-box-text">CPU Allocated</span>
+                                <span class="info-box-number">{{ $stats['cpu']['value'] }} / {{ $stats['cpu']['max'] }} %</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {{ $stats['cpu']['percent'] }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
                         <div class="info-box bg-blue">
                             <span class="info-box-icon"><i class="ion ion-social-buffer-outline"></i></span>
                             <div class="info-box-content" style="padding: 23px 10px 0;">
