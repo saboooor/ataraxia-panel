@@ -25,6 +25,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
 
         $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/settings/rename", [
             'name' => '',
+            'icon' => '',
             'description' => '',
         ]);
 
@@ -38,12 +39,14 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($user)
             ->postJson("/api/client/servers/$server->uuid/settings/rename", [
                 'name' => 'Test Server Name',
+                'icon' => 'https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png',
                 'description' => 'This is a test server.',
             ])
             ->assertStatus(Response::HTTP_NO_CONTENT);
 
         $server = $server->refresh();
         $this->assertSame('Test Server Name', $server->name);
+        $this->assertSame('https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png', $server->icon);
         $this->assertSame('This is a test server.', $server->description);
     }
 

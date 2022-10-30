@@ -195,7 +195,7 @@ class Permission extends Model
         'settings' => [
             'description' => 'Permissions that control a user\'s access to the settings for this server.',
             'keys' => [
-                'rename' => 'Allows a user to rename this server and change the description of it.',
+                'rename' => 'Allows a user to edit the server\'s details.',
                 'reinstall' => 'Allows a user to trigger a reinstall of this server.',
             ],
         ],

@@ -17,6 +17,7 @@ import { Textarea } from '@/components/elements/Input';
 
 interface Values {
     name: string;
+    icon: string;
     description: string;
 }
 
@@ -28,6 +29,7 @@ const RenameServerBox = () => {
             <SpinnerOverlay visible={isSubmitting} />
             <Form css={tw`mb-0`}>
                 <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
+                <Field id={'icon'} name={'icon'} label={'Server Icon URL'} type={'text'} />
                 <div css={tw`mt-6`}>
                     <Label>Server Description</Label>
                     <FormikFieldWrapper name={'description'}>
@@ -47,10 +49,10 @@ export default () => {
     const setServer = ServerContext.useStoreActions((actions) => actions.server.setServer);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
-    const submit = ({ name, description }: Values, { setSubmitting }: FormikHelpers<Values>) => {
+    const submit = ({ name, icon, description }: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('settings');
-        renameServer(server.uuid, name, description)
-            .then(() => setServer({ ...server, name, description }))
+        renameServer(server.uuid, name, icon, description)
+            .then(() => setServer({ ...server, name, icon, description }))
             .catch((error) => {
                 console.error(error);
                 addError({ key: 'settings', message: httpErrorToHuman(error) });
@@ -63,11 +65,13 @@ export default () => {
             onSubmit={submit}
             initialValues={{
                 name: server.name,
+                icon: server.icon,
                 description: server.description,
             }}
             validationSchema={object().shape({
                 name: string().required().min(1),
                 description: string().nullable(),
+                icon: string().nullable(),
             })}
         >
             <RenameServerBox />

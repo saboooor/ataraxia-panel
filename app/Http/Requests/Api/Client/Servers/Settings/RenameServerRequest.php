@@ -26,6 +26,7 @@ class RenameServerRequest extends ClientApiRequest implements ClientPermissionsR
     {
         return [
             'name' => Server::getRules()['name'],
+            'icon' => 'string|nullable',
             'description' => 'string|nullable',
         ];
     }

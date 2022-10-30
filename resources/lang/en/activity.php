@@ -115,6 +115,7 @@ return [
         ],
         'settings' => [
             'rename' => 'Renamed the server from :old to :new',
+            'icon' => 'Changed the server icon URL from :old to :new',
             'description' => 'Changed the server description from :old to :new',
         ],
         'startup' => [

@@ -16,6 +16,7 @@ export interface Server {
     internalId: number | string;
     uuid: string;
     name: string;
+    icon: string;
     node: string;
     status: ServerStatus;
     sftpDetails: {
@@ -49,6 +50,7 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     internalId: data.internal_id,
     uuid: data.uuid,
     name: data.name,
+    icon: data.icon,
     node: data.node,
     status: data.status,
     invocation: data.invocation,
