@@ -17,6 +17,7 @@ import Select from '@/components/elements/Select';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
 import FormikSwitch from '@/components/elements/FormikSwitch';
+import isEqual from 'react-fast-compare';
 
 interface Props {
     schedule: Schedule;
@@ -33,7 +34,7 @@ interface Values {
 }
 
 const schema = object().shape({
-    action: string().required().oneOf(['command', 'power', 'backup', 'delete_files']),
+    action: string().required().oneOf(['command', 'power', 'backup', 'wipe', 'delete_files']),
     payload: string().when('action', {
         is: (v) => v !== 'backup',
         then: string().required('A task payload must be provided.'),
@@ -53,7 +54,7 @@ const ActionListener = () => {
 
     useEffect(() => {
         if (value !== initialAction) {
-            setValue(value === 'power' ? 'start' : '');
+            setValue(value === 'power' ? 'start' : value === 'wipe' ? 'both' : '');
             setTouched(false);
         } else {
             setValue(initialPayload || '');
@@ -71,6 +72,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
     const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
+    const eggFeatures = ServerContext.useStoreState((state) => state.server.data!.eggFeatures, isEqual);
 
     useEffect(() => {
         return () => {
@@ -129,6 +131,9 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
+                                    {eggFeatures.includes('rust_wipe') && (
+                                        <option value={'wipe'}>Wipe rust server</option>
+                                    )}
                                     <option value={'delete_files'}>Delete files</option>
                                 </FormikField>
                             </FormikFieldWrapper>
@@ -173,6 +178,17 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     }
                                 >
                                     <FormikField as={Textarea} name={'payload'} rows={6} />
+                                </FormikFieldWrapper>
+                            </div>
+                        ) : values.action === 'wipe' ? (
+                            <div>
+                                <Label>Payload</Label>
+                                <FormikFieldWrapper name={'payload'}>
+                                    <FormikField as={Select} name={'payload'}>
+                                        <option value={'both'}>Delete World and Player data</option>
+                                        <option value={'world'}>Delete only World data</option>
+                                        <option value={'player'}>Delete only Player data</option>
+                                    </FormikField>
                                 </FormikFieldWrapper>
                             </div>
                         ) : (

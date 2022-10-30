@@ -35,6 +35,8 @@ const getActionDetails = (action: string): [string, any] => {
             return ['Send Power Action', faToggleOn];
         case 'backup':
             return ['Create Backup', faFileArchive];
+        case 'wipe':
+            return ['Rust Wipe', faTrashAlt];
         case 'delete_files':
             return ['Delete Files', faTrash];
         default:
