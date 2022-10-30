@@ -30,7 +30,7 @@ module.exports = {
                 primary: colors.orange,
                 gray: gray,
                 neutral: gray,
-                cyan: colors.cyan,
+                cyan: colors.amber,
             },
             fontSize: {
                 '2xs': '0.625rem',
