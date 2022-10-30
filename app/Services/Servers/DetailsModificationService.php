@@ -34,6 +34,7 @@ class DetailsModificationService
                 'external_id' => Arr::get($data, 'external_id'),
                 'owner_id' => Arr::get($data, 'owner_id'),
                 'name' => Arr::get($data, 'name'),
+                'icon' => Arr::get($data, 'icon'),
                 'description' => Arr::get($data, 'description') ?? '',
             ])->saveOrFail();
 

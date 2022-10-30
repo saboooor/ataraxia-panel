@@ -84,6 +84,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
 
         $data = [
             'name' => $this->faker->name,
+            'icon' => $this->faker->sentence,
             'description' => $this->faker->sentence,
             'owner_id' => $user->id,
             'memory' => 256,
@@ -175,6 +176,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
 
         $data = [
             'name' => $this->faker->name,
+            'icon' => $this->faker->sentence,
             'description' => $this->faker->sentence,
             'owner_id' => $user->id,
             'allocation_id' => $allocation->id,

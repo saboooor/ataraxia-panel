@@ -143,6 +143,7 @@ class ServerCreationService
             'uuidShort' => substr($uuid, 0, 8),
             'node_id' => Arr::get($data, 'node_id'),
             'name' => Arr::get($data, 'name'),
+            'icon' => Arr::get($data, 'icon') ?? '',
             'description' => Arr::get($data, 'description') ?? '',
             'status' => Server::STATUS_INSTALLING,
             'skip_scripts' => Arr::get($data, 'skip_scripts') ?? isset($data['skip_scripts']),

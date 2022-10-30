@@ -21,6 +21,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
         /** @var \Pterodactyl\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $originalName = $server->name;
+        $originalIcon = $server->icon;
         $originalDescription = $server->description;
 
         $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/settings/rename", [
@@ -34,6 +35,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
 
         $server = $server->refresh();
         $this->assertSame($originalName, $server->name);
+        $this->assertSame($originalIcon, $server->icon);
         $this->assertSame($originalDescription, $server->description);
 
         $this->actingAs($user)

@@ -46,6 +46,7 @@ class ServerConfigurationStructureService
             'uuid' => $server->uuid,
             'meta' => [
                 'name' => $server->name,
+                'icon' => $server->icon,
                 'description' => $server->description,
             ],
             'suspended' => $server->isSuspended(),

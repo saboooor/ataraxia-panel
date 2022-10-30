@@ -50,7 +50,7 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     internalId: data.internal_id,
     uuid: data.uuid,
     name: data.name,
-    icon: data.icon,
+    icon: data.icon ? (data.icon.length > 0 ? data.icon : null) : null,
     node: data.node,
     status: data.status,
     invocation: data.invocation,
