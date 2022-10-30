@@ -15,6 +15,7 @@ import UptimeDuration from '@/components/server/UptimeDuration';
 import StatBlock from '@/components/server/console/StatBlock';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import classNames from 'classnames';
+import tw from 'twin.macro';
 import { capitalize } from '@/lib/strings';
 
 type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
@@ -43,6 +44,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
     const [stats, setStats] = useState<Stats>({ memory: 0, cpu: 0, disk: 0, uptime: 0, tx: 0, rx: 0 });
 
     const status = ServerContext.useStoreState((state) => state.status.value);
+    const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
     const connected = ServerContext.useStoreState((state) => state.socket.connected);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
     const limits = ServerContext.useStoreState((state) => state.server.data!.limits);
@@ -90,21 +92,20 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
 
     return (
         <div className={classNames('grid grid-cols-6 gap-2 md:gap-4', className)}>
-            <StatBlock icon={faWifi} title={'Address'} copyOnClick={allocation}>
-                {allocation}
-            </StatBlock>
             <StatBlock
                 icon={faClock}
-                title={'Uptime'}
-                color={getBackgroundColor(status === 'running' ? 0 : status !== 'offline' ? 9 : 10, 10)}
+                title={'Status'}
+                color={status === 'running' ? 'bg-green-500' : status === 'offline' ? 'bg-red-500' : 'bg-yellow-500'}
             >
-                {status === null ? (
-                    'Offline'
-                ) : stats.uptime > 0 ? (
-                    <UptimeDuration uptime={stats.uptime / 1000} />
-                ) : (
-                    capitalize(status)
+                {!status ? 'Connecting...' : isTransferring ? 'Transferring' : capitalize(status)}
+                {stats.uptime > 0 && (
+                    <span css={tw`ml-2`}>
+                        (<UptimeDuration uptime={stats.uptime / 1000} />)
+                    </span>
                 )}
+            </StatBlock>
+            <StatBlock icon={faWifi} title={'Address'} copyOnClick={allocation}>
+                {allocation}
             </StatBlock>
             <StatBlock icon={faMicrochip} title={'CPU Load'} color={getBackgroundColor(stats.cpu, limits.cpu)}>
                 {status === 'offline' ? (
