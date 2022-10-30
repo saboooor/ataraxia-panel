@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/elements/button/index';
 import Can from '@/components/elements/Can';
 import { ServerContext } from '@/state/server';
 import { PowerAction } from '@/components/server/console/ServerConsoleContainer';
-import { Dialog } from '@/components/elements/dialog';
-
 interface PowerButtonProps {
     className?: string;
 }
 
 export default ({ className }: PowerButtonProps) => {
-    const [open, setOpen] = useState(false);
     const status = ServerContext.useStoreState((state) => state.status.value);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
 
@@ -19,34 +16,11 @@ export default ({ className }: PowerButtonProps) => {
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ): void => {
         e.preventDefault();
-        if (action === 'kill') {
-            return setOpen(true);
-        }
-
-        if (instance) {
-            setOpen(false);
-            instance.send('set state', action === 'kill-confirmed' ? 'kill' : action);
-        }
+        if (instance) instance.send('set state', action === 'kill-confirmed' ? 'kill' : action);
     };
-
-    useEffect(() => {
-        if (status === 'offline') {
-            setOpen(false);
-        }
-    }, [status]);
 
     return (
         <div className={className}>
-            <Dialog.Confirm
-                open={open}
-                hideCloseIcon
-                onClose={() => setOpen(false)}
-                title={'Forcibly Stop Process'}
-                confirm={'Continue'}
-                onConfirmed={onButtonClick.bind(this, 'kill-confirmed')}
-            >
-                Forcibly stopping a server can lead to data corruption.
-            </Dialog.Confirm>
             <Can action={'control.start'}>
                 <Button
                     className={'flex-1'}
@@ -70,9 +44,9 @@ export default ({ className }: PowerButtonProps) => {
                     Stop
                 </Button.Danger>
                 <Button.Danger
-                    className={'w-full sm:w-24'}
+                    className={'flex-1'}
                     disabled={status === 'offline'}
-                    onClick={onButtonClick.bind(this, 'kill')}
+                    onClick={onButtonClick.bind(this, 'kill-confirmed')}
                 >
                     Kill
                 </Button.Danger>
