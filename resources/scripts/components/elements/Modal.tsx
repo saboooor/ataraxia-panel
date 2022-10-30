@@ -122,7 +122,7 @@ const Modal: React.FC<ModalProps> = ({
                     {showSpinnerOverlay && (
                         <Fade timeout={150} appear in>
                             <div
-                                css={tw`absolute w-full h-full rounded flex items-center justify-center`}
+                                css={tw`absolute w-full h-full rounded-lg flex items-center justify-center`}
                                 style={{ background: 'hsla(211, 10%, 53%, 0.35)', zIndex: 9999 }}
                             >
                                 <Spinner />
@@ -130,7 +130,7 @@ const Modal: React.FC<ModalProps> = ({
                         </Fade>
                     )}
                     <div
-                        css={tw`bg-neutral-800 p-3 sm:p-4 md:p-6 rounded shadow-md overflow-y-scroll transition-all duration-150`}
+                        css={tw`bg-neutral-800 p-3 sm:p-4 md:p-6 rounded-lg shadow-md overflow-y-scroll transition-all duration-150`}
                     >
                         {children}
                     </div>

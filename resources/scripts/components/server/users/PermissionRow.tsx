@@ -6,7 +6,7 @@ import { useStoreState } from 'easy-peasy';
 import Label from '@/components/elements/Label';
 
 const Container = styled.label`
-    ${tw`flex items-center border border-transparent rounded md:p-2 transition-colors duration-75`};
+    ${tw`flex items-center border border-transparent rounded-lg md:p-2 transition-colors duration-75`};
     text-transform: none;
 
     &:not(.disabled) {

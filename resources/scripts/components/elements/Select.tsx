@@ -6,7 +6,7 @@ interface Props {
 }
 
 const Select = styled.select<Props>`
-    ${tw`shadow-none block p-3 pr-8 rounded border w-full text-sm transition-colors duration-150 ease-linear`};
+    ${tw`shadow-none block p-3 pr-8 rounded-lg border w-full text-sm transition-colors duration-150 ease-linear`};
 
     &,
     &:hover:not(:disabled),

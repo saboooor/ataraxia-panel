@@ -36,7 +36,7 @@ import { Dialog } from '@/components/elements/dialog';
 type ModalType = 'rename' | 'move' | 'chmod';
 
 const StyledRow = styled.div<{ $danger?: boolean }>`
-    ${tw`p-2 flex items-center rounded`};
+    ${tw`p-2 flex items-center rounded-lg`};
     ${(props) =>
         props.$danger ? tw`hover:bg-red-100 hover:text-red-700` : tw`hover:bg-neutral-100 hover:text-neutral-700`};
 `;
