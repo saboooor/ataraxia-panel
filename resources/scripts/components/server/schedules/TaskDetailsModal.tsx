@@ -33,7 +33,7 @@ interface Values {
 }
 
 const schema = object().shape({
-    action: string().required().oneOf(['command', 'power', 'backup']),
+    action: string().required().oneOf(['command', 'power', 'backup', 'delete_files']),
     payload: string().when('action', {
         is: (v) => v !== 'backup',
         then: string().required('A task payload must be provided.'),
@@ -129,6 +129,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
+                                    <option value={'delete_files'}>Delete files</option>
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
@@ -162,7 +163,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     </FormikField>
                                 </FormikFieldWrapper>
                             </div>
-                        ) : (
+                        ) : values.action === 'backup' ? (
                             <div>
                                 <Label>Ignored Files</Label>
                                 <FormikFieldWrapper
@@ -172,6 +173,16 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     }
                                 >
                                     <FormikField as={Textarea} name={'payload'} rows={6} />
+                                </FormikFieldWrapper>
+                            </div>
+                        ) : (
+                            <div>
+                                <Label>Files to delete</Label>
+                                <FormikFieldWrapper
+                                    name={'payload'}
+                                    description={'Specify the files that will be deleted. (Whitelist)'}
+                                >
+                                    <FormikField as={Textarea} name={'payload'} rows={6}/>
                                 </FormikFieldWrapper>
                             </div>
                         )}
