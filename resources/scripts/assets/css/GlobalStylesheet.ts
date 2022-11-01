@@ -32,6 +32,11 @@ export default createGlobalStyle`
     input[type=number] {
         -moz-appearance: textfield !important;
     }
+    
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+        -webkit-text-fill-color: yellow !important;
+        -webkit-box-shadow: 0 0 0 30px #5b5b80 inset !important;
+    }
 
     /* Scroll Bar Style */
     ::-webkit-scrollbar {
