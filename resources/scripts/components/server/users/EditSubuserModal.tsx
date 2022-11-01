@@ -14,33 +14,34 @@ import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import PermissionTitleBox from '@/components/server/users/PermissionTitleBox';
+import PermissionSelectAll from '@/components/server/users/PermissionSelectAll';
 import asModal from '@/hoc/asModal';
 import PermissionRow from '@/components/server/users/PermissionRow';
 import ModalContext from '@/context/ModalContext';
 
 type Props = {
-    subuser?: Subuser;
+  subuser?: Subuser;
 };
 
 interface Values {
-    email: string;
-    permissions: string[];
+  email: string;
+  permissions: string[];
 }
 
 const EditSubuserModal = ({ subuser }: Props) => {
     const ref = useRef<HTMLHeadingElement>(null);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const appendSubuser = ServerContext.useStoreActions((actions) => actions.subusers.appendSubuser);
+    const uuid = ServerContext.useStoreState(((state)) => state.server.data!.uuid);
+    const appendSubuser = ServerContext.useStoreActions(((actions)) => actions.subusers.appendSubuser);
     const { clearFlashes, clearAndAddHttpError } = useStoreActions(
         (actions: Actions<ApplicationStore>) => actions.flashes
     );
     const { dismiss, setPropOverrides } = useContext(ModalContext);
 
-    const isRootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
-    const permissions = useStoreState((state) => state.permissions.data);
+    const isRootAdmin = useStoreState(state => state.user.data!.rootAdmin);
+    const permissions = useStoreState(state => state.permissions.data);
     // The currently logged in user's permissions. We're going to filter out any permissions
     // that they should not need.
-    const loggedInPermissions = ServerContext.useStoreState((state) => state.server.permissions);
+    const loggedInPermissions = ServerContext.useStoreState(((state)) => state.server.permissions);
     const [canEditUser] = usePermissions(subuser ? ['user.update'] : ['user.create']);
 
     // The permissions that can be modified by this user.
@@ -55,19 +56,19 @@ const EditSubuserModal = ({ subuser }: Props) => {
             return list;
         }
 
-        return list.filter((key) => loggedInPermissions.indexOf(key) >= 0);
-    }, [isRootAdmin, permissions, loggedInPermissions]);
+        return list.filter(key => loggedInPermissions.indexOf(key) >= 0);
+    }, [ isRootAdmin, permissions, loggedInPermissions ]);
 
     const submit = (values: Values) => {
         setPropOverrides({ showSpinnerOverlay: true });
         clearFlashes('user:edit');
 
         createOrUpdateSubuser(uuid, values, subuser)
-            .then((subuser) => {
+            .then(subuser => {
                 appendSubuser(subuser);
                 dismiss();
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error(error);
                 setPropOverrides(null);
                 clearAndAddHttpError({ key: 'user:edit', error });
@@ -78,22 +79,17 @@ const EditSubuserModal = ({ subuser }: Props) => {
             });
     };
 
-    useEffect(
-        () => () => {
-            clearFlashes('user:edit');
-        },
-        []
-    );
+    useEffect(() => () => {
+        clearFlashes('user:edit');
+    }, []);
 
     return (
         <Formik
             onSubmit={submit}
-            initialValues={
-                {
-                    email: subuser?.email || '',
-                    permissions: subuser?.permissions || [],
-                } as Values
-            }
+            initialValues={{
+                email: subuser?.email || '',
+                permissions: subuser?.permissions || [],
+            } as Values}
             validationSchema={object().shape({
                 email: string()
                     .max(191, 'Email addresses must not exceed 191 characters.')
@@ -115,12 +111,12 @@ const EditSubuserModal = ({ subuser }: Props) => {
                         </Button>
                     </div>
                 </div>
+
                 <FlashMessageRender byKey={'user:edit'} css={tw`mt-4`} />
                 {!isRootAdmin && loggedInPermissions[0] !== '*' && (
                     <div css={tw`mt-4 pl-4 py-2 border-l-4 border-cyan-400`}>
                         <p css={tw`text-sm text-neutral-300`}>
-                            Only permissions which your account is currently assigned may be selected when creating or
-                            modifying other users.
+              Only permissions which your account is currently assigned may be selected when creating or modifying other users.
                         </p>
                     </div>
                 )}
@@ -136,6 +132,10 @@ const EditSubuserModal = ({ subuser }: Props) => {
                     </div>
                 )}
                 <div css={tw`my-6`}>
+                    <div css={tw`flex items-center mb-4 bg-neutral-600 p-2 rounded shadow-sm`}>
+                        <p css={tw`text-sm flex-1 ml-1 text-neutral-200`}>Select all permissions</p>
+                        {canEditUser && <PermissionSelectAll isEditable={canEditUser} permissions={editablePermissions}/>}
+                    </div>
                     {Object.keys(permissions)
                         .filter((key) => key !== 'websocket')
                         .map((key, index) => (
