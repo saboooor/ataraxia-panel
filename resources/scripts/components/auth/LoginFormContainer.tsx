@@ -11,20 +11,16 @@ type Props = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, 
 
 const Container = styled.div`
     ${breakpoint('sm')`
-        ${tw`w-4/5 mx-auto`}
+        ${tw`w-1/2 mx-auto`}
     `};
 
     ${breakpoint('md')`
         ${tw`p-10`}
     `};
 
-    ${breakpoint('lg')`
-        ${tw`w-3/5`}
-    `};
-
     ${breakpoint('xl')`
         ${tw`w-full`}
-        max-width: 700px;
+        max-width: 500px;
     `};
 `;
 
