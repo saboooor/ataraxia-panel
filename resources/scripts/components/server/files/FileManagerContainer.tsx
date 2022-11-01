@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -22,12 +22,12 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 import style from './style.module.css';
+import Input from '@/components/elements/Input';
 
-const sortFiles = (files: FileObject[]): FileObject[] => {
-    const sortedFiles: FileObject[] = files
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => (a.isFile === b.isFile ? 0 : a.isFile ? 1 : -1));
-    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name);
+
+const sortFiles = (files: FileObject[], searchString: string): FileObject[] => {
+    const sortedFiles: FileObject[] = files.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.isFile === b.isFile ? 0 : (a.isFile ? 1 : -1));
+    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name).filter((file) => file.name.toLowerCase().includes(searchString.toLowerCase()));
 };
 
 export default () => {
@@ -40,6 +40,8 @@ export default () => {
 
     const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);
     const selectedFilesLength = ServerContext.useStoreState((state) => state.files.selectedFiles.length);
+
+    const [ searchString, setSearchString ] = useState('');
 
     useEffect(() => {
         clearFlashes('files');
@@ -59,11 +61,20 @@ export default () => {
         return <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />;
     }
 
+    const searchFiles = (event: ChangeEvent<HTMLInputElement>) => {
+        if (files) {
+            setSearchString(event.target.value);
+            sortFiles(files, searchString);
+            mutate();
+        }
+    };
+
     return (
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
             <ErrorBoundary>
                 <div className={'flex flex-wrap-reverse md:flex-nowrap mb-4'}>
                     <FileManagerBreadcrumbs
+                        css={tw`w-full`}
                         renderLeft={
                             <FileActionCheckbox
                                 type={'checkbox'}
@@ -73,13 +84,20 @@ export default () => {
                             />
                         }
                     />
+                    <Input
+                        onChange={searchFiles}
+                        css={tw`md:mx-6 w-full px-4 mb-4 md:mb-0`}
+                        placeholder='Search'
+
+                    >
+                    </Input>
                     <Can action={'file.create'}>
                         <div className={style.manager_actions}>
                             <FileManagerStatus />
-                            <NewDirectoryButton />
+                            <NewDirectoryButton css={tw`whitespace-nowrap`} />
                             <UploadButton />
                             <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
-                                <Button>New File</Button>
+                                <Button css={tw`whitespace-nowrap h-full`}>New File</Button>
                             </NavLink>
                         </div>
                     </Can>
@@ -102,7 +120,7 @@ export default () => {
                                         </p>
                                     </div>
                                 )}
-                                {sortFiles(files.slice(0, 250)).map((file) => (
+                                {sortFiles(files.slice(0, 250), searchString).map((file) => (
                                     <FileObjectRow key={file.key} file={file} />
                                 ))}
                                 <MassActionsBar />
