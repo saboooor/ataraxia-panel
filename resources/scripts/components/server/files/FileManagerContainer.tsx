@@ -100,7 +100,7 @@ export default () => {
     const searchFiles = (event: ChangeEvent<HTMLInputElement>) => {
         if (files) {
             setSearchString(event.target.value);
-            sortFiles(files, searchString);
+            sortFiles(files, sortMethod, searchString);
             mutate();
         }
     };

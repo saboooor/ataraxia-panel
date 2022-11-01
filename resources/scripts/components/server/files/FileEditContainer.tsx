@@ -94,10 +94,11 @@ export default () => {
             {hash.replace(/^#/, '').endsWith('.pteroignore') && (
                 <div css={tw`mb-4 p-4 border-l-4 bg-neutral-900 rounded-lg border-cyan-400`}>
                     <p css={tw`text-neutral-300 text-sm`}>
-                        You&apos;re editing a <code css={tw`font-mono bg-black rounded-lg py-px px-1`}>.pteroignore</code>{' '}
-                        file. Any files or directories listed in here will be excluded from backups. Wildcards are
-                        supported by using an asterisk (<code css={tw`font-mono bg-black rounded-lg py-px px-1`}>*</code>).
-                        You can negate a prior rule by prepending an exclamation point (
+                        You&apos;re editing a{' '}
+                        <code css={tw`font-mono bg-black rounded-lg py-px px-1`}>.pteroignore</code> file. Any files or
+                        directories listed in here will be excluded from backups. Wildcards are supported by using an
+                        asterisk (<code css={tw`font-mono bg-black rounded-lg py-px px-1`}>*</code>). You can negate a
+                        prior rule by prepending an exclamation point (
                         <code css={tw`font-mono bg-black rounded-lg py-px px-1`}>!</code>).
                     </p>
                 </div>
