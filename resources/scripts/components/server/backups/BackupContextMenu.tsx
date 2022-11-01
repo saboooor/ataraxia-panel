@@ -165,10 +165,7 @@ export default ({ backup }: Props) => {
             {backup.isSuccessful ? (
                 <DropdownMenu
                     renderToggle={(onClick) => (
-                        <button
-                            onClick={onClick}
-                            css={tw`text-gray-200 transition-colors duration-150 hover:text-gray-100 p-2`}
-                        >
+                        <button onClick={onClick} css={tw`duration-150 p-2`}>
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
                     )}
