@@ -2,6 +2,10 @@ import tw from 'twin.macro';
 import { createGlobalStyle } from 'styled-components/macro';
 
 export default createGlobalStyle`
+    html {
+        overflow: overlay;
+    }
+
     body {
         ${tw`font-sans bg-neutral-800 text-neutral-200`};
         letter-spacing: 0.015em;
@@ -50,7 +54,7 @@ export default createGlobalStyle`
         border-right-width: 4px;
         border-left-width: 4px;
         -webkit-border-radius: 9px 4px;
-        -webkit-box-shadow: inset 0 0 0 1px hsl(211, 10%, 53%), inset 0 0 0 4px hsl(209deg 18% 30%);
+        -webkit-box-shadow: inset 0 0 0 1px #5B5B80, inset 0 0 0 4px #363654;
     }
 
     ::-webkit-scrollbar-track-piece {
