@@ -34,15 +34,30 @@ class SettingsController extends ClientApiController
      */
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
+        $name = $request->input('name');
+        $icon = $request->input('icon');
+        $description = $request->input('description') ?? '';
         $this->repository->update($server->id, [
-            'name' => $request->input('name'),
-            'icon' => $request->input('icon') ?? '',
-            'description' => $request->input('description') ?? '',
+            'name' => $name,
+            'icon' => $icon,
+            'description' => $description,
         ]);
 
-        if ($server->name !== $request->input('name')) {
+        if ($server->name !== $name) {
             Activity::event('server:settings.rename')
-                ->property(['old' => $server->name, 'new' => $request->input('name')])
+                ->property(['old' => $server->name, 'new' => $name])
+                ->log();
+        }
+
+        if ($server->icon !== $icon) {
+            Activity::event('server:settings.icon')
+                ->property(['old' => $server->icon, 'new' => $icon])
+                ->log();
+        }
+
+        if ($server->description !== $description) {
+            Activity::event('server:settings.description')
+                ->property(['old' => $server->description, 'new' => $description])
                 ->log();
         }
 
