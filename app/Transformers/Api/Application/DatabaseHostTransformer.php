@@ -2,7 +2,9 @@
 
 namespace Pterodactyl\Transformers\Api\Application;
 
+use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Database;
+use League\Fractal\Resource\Item;
 use Pterodactyl\Models\DatabaseHost;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
@@ -12,6 +14,7 @@ class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
+        'node',
     ];
 
     /**
@@ -54,5 +57,21 @@ class DatabaseHostTransformer extends BaseTransformer
         $model->loadMissing('databases');
 
         return $this->collection($model->getRelation('databases'), $this->makeTransformer(ServerDatabaseTransformer::class), Database::RESOURCE_NAME);
+    }
+
+    /**
+     * Include the node associated with this host.
+     *
+     * @throws \Pterodactyl\Exceptions\Transformer\InvalidTransformerLevelException
+     */
+    public function includeNode(DatabaseHost $model): Item|NullResource
+    {
+        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+            return $this->null();
+        }
+
+        $model->loadMissing('node');
+
+        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }
