@@ -1,4 +1,3 @@
-import React from 'react';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { ServerContext } from '@/state/server';
 import { useStoreState } from 'easy-peasy';
@@ -17,12 +16,12 @@ import { Button } from '@/components/elements/button/index';
 import WipeServerBox from '@/components/server/settings/WipeServerBox';
 
 export default () => {
-    const username = useStoreState((state) => state.user.data!.username);
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const node = ServerContext.useStoreState((state) => state.server.data!.node);
-    const sftp = ServerContext.useStoreState((state) => state.server.data!.sftpDetails, isEqual);
-    const eggFeatures = ServerContext.useStoreState((state) => state.server.data!.eggFeatures, isEqual);
+    const username = useStoreState(state => state.user.data!.username);
+    const id = ServerContext.useStoreState(state => state.server.data!.id);
+    const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
+    const node = ServerContext.useStoreState(state => state.server.data!.node);
+    const sftp = ServerContext.useStoreState(state => state.server.data!.sftpDetails, isEqual);
+    const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
 
     return (
         <ServerContentBlock title={'Settings'}>
@@ -82,7 +81,7 @@ export default () => {
                         <div css={tw`mb-6 md:mb-10`}>
                             <ReinstallServerBox />
                         </div>
-                        {eggFeatures.includes('rust_wipe') && <WipeServerBox/>}
+                        {eggFeatures.includes('rust_wipe') && <WipeServerBox />}
                     </Can>
                 </div>
             </div>

@@ -1,4 +1,5 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 import { Button } from '@/components/elements/button/index';
 import Can from '@/components/elements/Can';
 import { ServerContext } from '@/state/server';
@@ -8,12 +9,12 @@ interface PowerButtonProps {
 }
 
 export default ({ className }: PowerButtonProps) => {
-    const status = ServerContext.useStoreState((state) => state.status.value);
-    const instance = ServerContext.useStoreState((state) => state.socket.instance);
+    const status = ServerContext.useStoreState(state => state.status.value);
+    const instance = ServerContext.useStoreState(state => state.socket.instance);
 
     const onButtonClick = (
         action: PowerAction | 'kill-confirmed',
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ): void => {
         e.preventDefault();
         if (instance) instance.send('set state', action === 'kill-confirmed' ? 'kill' : action);

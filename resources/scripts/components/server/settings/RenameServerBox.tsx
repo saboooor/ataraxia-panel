@@ -1,4 +1,3 @@
-import React from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
@@ -45,15 +44,15 @@ const RenameServerBox = () => {
 };
 
 export default () => {
-    const server = ServerContext.useStoreState((state) => state.server.data!);
-    const setServer = ServerContext.useStoreActions((actions) => actions.server.setServer);
+    const server = ServerContext.useStoreState(state => state.server.data!);
+    const setServer = ServerContext.useStoreActions(actions => actions.server.setServer);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
     const submit = ({ name, icon, description }: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('settings');
         renameServer(server.uuid, name, icon, description)
             .then(() => setServer({ ...server, name, icon, description }))
-            .catch((error) => {
+            .catch(error => {
                 console.error(error);
                 addError({ key: 'settings', message: httpErrorToHuman(error) });
             })
@@ -65,8 +64,8 @@ export default () => {
             onSubmit={submit}
             initialValues={{
                 name: server.name,
-                icon: server.icon,
-                description: server.description,
+                icon: server.icon ?? '',
+                description: server.description ?? '',
             }}
             validationSchema={object().shape({
                 name: string().required().min(1),

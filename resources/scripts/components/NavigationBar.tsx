@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,7 +6,7 @@ import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
 import tw, { theme } from 'twin.macro';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
@@ -40,6 +39,7 @@ export default () => {
 
     const onTriggerLogout = () => {
         setIsLoggingOut(true);
+
         http.post('/auth/logout').finally(() => {
             // @ts-expect-error this is valid
             window.location = '/';
@@ -47,15 +47,13 @@ export default () => {
     };
 
     return (
-        <div className={'w-full bg-neutral-900 shadow-md overflow-x-auto sticky top-0 z-50'}>
+        <div className="w-full bg-neutral-900 shadow-md overflow-x-auto sticky top-0 z-50">
             <SpinnerOverlay visible={isLoggingOut} />
-            <div className={'mx-auto w-full flex items-center h-[3.5rem] max-w-[1200px]'}>
-                <div id={'logo'} className={'flex-1'}>
+            <div className="mx-auto w-full flex items-center h-[3.5rem] max-w-[1200px]">
+                <div id="logo" className="flex-1">
                     <Link
-                        to={'/'}
-                        className={
-                            'text-2xl font-header px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
-                        }
+                        to="/"
+                        className="text-2xl font-header px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150"
                     >
                         {!!logo && (
                             <img
@@ -67,28 +65,32 @@ export default () => {
                         {!logo && <span>{name}</span>}
                     </Link>
                 </div>
-                <RightNavigation className={'flex h-full items-center justify-center'}>
+                <RightNavigation className="flex h-full items-center justify-center">
                     <SearchContainer />
-                    <Tooltip placement={'bottom'} content={'Dashboard'}>
-                        <NavLink to={'/'} exact>
+
+                    <Tooltip placement="bottom" content="Dashboard">
+                        <NavLink to="/" end>
                             <FontAwesomeIcon icon={faLayerGroup} />
                         </NavLink>
                     </Tooltip>
+
                     {rootAdmin && (
-                        <Tooltip placement={'bottom'} content={'Admin'}>
-                            <a href={'/admin'} rel={'noreferrer'}>
+                        <Tooltip placement="bottom" content="Admin">
+                            <a href="/admin" rel="noreferrer">
                                 <FontAwesomeIcon icon={faCogs} />
                             </a>
                         </Tooltip>
                     )}
-                    <Tooltip placement={'bottom'} content={'Account Settings'}>
-                        <NavLink to={'/account'}>
-                            <span className={'flex items-center w-5 h-5'}>
+
+                    <Tooltip placement="bottom" content="Account Settings">
+                        <NavLink to="/account">
+                            <span className="flex items-center w-5 h-5">
                                 <Avatar.User />
                             </span>
                         </NavLink>
                     </Tooltip>
-                    <Tooltip placement={'bottom'} content={'Sign Out'}>
+
+                    <Tooltip placement="bottom" content="Sign Out">
                         <button onClick={onTriggerLogout}>
                             <FontAwesomeIcon icon={faSignOutAlt} />
                         </button>

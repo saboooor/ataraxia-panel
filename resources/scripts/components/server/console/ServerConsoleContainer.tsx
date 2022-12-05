@@ -1,31 +1,30 @@
-import React, { memo } from 'react';
-import { ServerContext } from '@/state/server';
+import { memo } from 'react';
+import isEqual from 'react-fast-compare';
+
+import { Alert } from '@/components/elements/alert';
 import Can from '@/components/elements/Can';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import isEqual from 'react-fast-compare';
 import Spinner from '@/components/elements/Spinner';
-import Features from '@feature/Features';
 import Console from '@/components/server/console/Console';
-import StatGraphs from '@/components/server/console/StatGraphs';
 import PowerButtons from '@/components/server/console/PowerButtons';
 import ServerDetailsBlock from '@/components/server/console/ServerDetailsBlock';
-import { Alert } from '@/components/elements/alert';
+import StatGraphs from '@/components/server/console/StatGraphs';
+import Features from '@feature/Features';
+import { ServerContext } from '@/state/server';
 
 export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
-const ServerConsoleContainer = () => {
-    const name = ServerContext.useStoreState((state) => state.server.data!.name);
-    const icon = ServerContext.useStoreState((state) => state.server.data!.icon);
-    const description = ServerContext.useStoreState((state) => state.server.data!.description);
-    const isInstalling = ServerContext.useStoreState((state) => state.server.isInstalling);
-    const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
-    const eggFeatures = ServerContext.useStoreState((state) => state.server.data!.eggFeatures, isEqual);
-    const isNodeUnderMaintenance = ServerContext.useStoreState((state) => state.server.data!.isNodeUnderMaintenance);
-    const isSuspended = ServerContext.useStoreState((state) => state.server.data!.status === 'suspended');
+function ServerConsoleContainer() {
+    const name = ServerContext.useStoreState(state => state.server.data!.name);
+    const icon = ServerContext.useStoreState(state => state.server.data!.icon);
+    const description = ServerContext.useStoreState(state => state.server.data!.description);
+    const isInstalling = ServerContext.useStoreState(state => state.server.isInstalling);
+    const isTransferring = ServerContext.useStoreState(state => state.server.data!.isTransferring);
+    const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
+    const isNodeUnderMaintenance = ServerContext.useStoreState(state => state.server.data!.isNodeUnderMaintenance);
+    const isSuspended = ServerContext.useStoreState(state => state.server.data!.status === 'suspended');
 
-    if (new URLSearchParams(window.location.search).get('popup')) {
-        return <Console popup={true} />;
-    }
+    if (new URLSearchParams(window.location.search).get('popup')) return <Console popup={true} />;
 
     return (
         <ServerContentBlock title={'Console'}>
@@ -87,6 +86,6 @@ const ServerConsoleContainer = () => {
             <Features enabled={eggFeatures} />
         </ServerContentBlock>
     );
-};
+}
 
 export default memo(ServerConsoleContainer, isEqual);

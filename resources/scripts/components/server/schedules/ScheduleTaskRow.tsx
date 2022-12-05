@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -45,12 +45,12 @@ const getActionDetails = (action: string): [string, any] => {
 };
 
 export default ({ schedule, task }: Props) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
     const { clearFlashes, addError } = useFlash();
     const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
+    const appendSchedule = ServerContext.useStoreActions(actions => actions.schedules.appendSchedule);
 
     const onConfirmDeletion = () => {
         setIsLoading(true);
@@ -59,10 +59,10 @@ export default ({ schedule, task }: Props) => {
             .then(() =>
                 appendSchedule({
                     ...schedule,
-                    tasks: schedule.tasks.filter((t) => t.id !== task.id),
-                })
+                    tasks: schedule.tasks.filter(t => t.id !== task.id),
+                }),
             )
-            .catch((error) => {
+            .catch(error => {
                 console.error(error);
                 setIsLoading(false);
                 addError({ message: httpErrorToHuman(error), key: 'schedules' });

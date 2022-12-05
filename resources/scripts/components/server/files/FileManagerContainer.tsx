@@ -1,6 +1,8 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
+import tw from 'twin.macro';
+
 import { httpErrorToHuman } from '@/api/http';
-import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
 import FileObjectRow from '@/components/server/files/FileObjectRow';
 import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
@@ -9,19 +11,19 @@ import NewDirectoryButton from '@/components/server/files/NewDirectoryButton';
 import { NavLink, useLocation } from 'react-router-dom';
 import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
-import tw from 'twin.macro';
 import { Button } from '@/components/elements/button/index';
 import { ServerContext } from '@/state/server';
 import useFileManagerSwr from '@/plugins/useFileManagerSwr';
-import FileManagerStatus from '@/components/server/files/FileManagerStatus';
+// import FileManagerStatus from '@/components/server/files/FileManagerStatus';
 import MassActionsBar from '@/components/server/files/MassActionsBar';
-import UploadButton from '@/components/server/files/UploadButton';
+// import UploadButton from '@/components/server/files/UploadButton';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import { useStoreActions } from '@/state/hooks';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 import style from './style.module.css';
+import FadeTransition from '@/components/elements/transitions/FadeTransition';
 import Input from '@/components/elements/Input';
 
 enum SortMethod {
@@ -61,20 +63,20 @@ const sortFiles = (files: FileObject[], method: SortMethod, searchString: string
 
     sortedFiles = sortedFiles.sort((a, b) => (a.isFile === b.isFile ? 0 : a.isFile ? 1 : -1));
     return sortedFiles
-        .filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name)
-        .filter((file) => file.name.toLowerCase().includes(searchString.toLowerCase()));
+        .filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1]?.name)
+        .filter(file => file.name.toLowerCase().includes(searchString.toLowerCase()));
 };
 
 export default () => {
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
+    const id = ServerContext.useStoreState(state => state.server.data!.id);
     const { hash } = useLocation();
     const { data: files, error, mutate } = useFileManagerSwr();
-    const directory = ServerContext.useStoreState((state) => state.files.directory);
-    const clearFlashes = useStoreActions((actions) => actions.flashes.clearFlashes);
-    const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);
+    const directory = ServerContext.useStoreState(state => state.files.directory);
+    const clearFlashes = useStoreActions(actions => actions.flashes.clearFlashes);
+    const setDirectory = ServerContext.useStoreActions(actions => actions.files.setDirectory);
 
-    const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);
-    const selectedFilesLength = ServerContext.useStoreState((state) => state.files.selectedFiles.length);
+    const setSelectedFiles = ServerContext.useStoreActions(actions => actions.files.setSelectedFiles);
+    const selectedFilesLength = ServerContext.useStoreState(state => state.files.selectedFiles.length);
 
     const [searchString, setSearchString] = useState('');
     const [sortMethod, setSortMethod] = useState(SortMethod.NameDown);
@@ -86,11 +88,11 @@ export default () => {
     }, [hash]);
 
     useEffect(() => {
-        mutate();
+        void mutate();
     }, [directory, sortMethod]);
 
-    const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedFiles(e.currentTarget.checked ? files?.map((file) => file.name) || [] : []);
+    const onSelectAllClick = (e: ChangeEvent<HTMLInputElement>) => {
+        setSelectedFiles(e.currentTarget.checked ? files?.map(file => file.name) || [] : []);
     };
 
     if (error) {
@@ -123,13 +125,13 @@ export default () => {
                     <Input
                         onChange={searchFiles}
                         css={tw`md:mx-6 w-full px-4 mb-4 md:mb-0`}
-                        placeholder='Search'
+                        placeholder="Search"
                     ></Input>
                     <Can action={'file.create'}>
                         <div className={style.manager_actions}>
-                            <FileManagerStatus />
+                            {/*<FileManagerStatus />*/}
                             <NewDirectoryButton css={tw`whitespace-nowrap`} />
-                            <UploadButton />
+                            {/*<UploadButton />*/}
                             <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
                                 <Button css={tw`whitespace-nowrap h-full`}>New File</Button>
                             </NavLink>
@@ -174,7 +176,7 @@ export default () => {
                     {!files.length ? (
                         <p css={tw`text-sm text-neutral-400 text-center`}>This directory seems to be empty.</p>
                     ) : (
-                        <CSSTransition classNames={'fade'} timeout={150} appear in>
+                        <FadeTransition duration="duration-150" appear show>
                             <div css={tw`rounded-lg overflow-hidden`}>
                                 {files.length > 250 && (
                                     <div css={tw`rounded-lg bg-yellow-400 mb-px p-3`}>
@@ -184,12 +186,12 @@ export default () => {
                                         </p>
                                     </div>
                                 )}
-                                {sortFiles(files.slice(0, 250), sortMethod, searchString).map((file) => (
+                                {sortFiles(files.slice(0, 250), sortMethod, searchString).map(file => (
                                     <FileObjectRow key={file.key} file={file} />
                                 ))}
                                 <MassActionsBar />
                             </div>
-                        </CSSTransition>
+                        </FadeTransition>
                     )}
                 </>
             )}

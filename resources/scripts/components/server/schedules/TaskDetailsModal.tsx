@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
 import { Field as FormikField, Form, Formik, FormikHelpers, useField } from 'formik';
 import { ServerContext } from '@/state/server';
@@ -36,7 +36,7 @@ interface Values {
 const schema = object().shape({
     action: string().required().oneOf(['command', 'power', 'backup', 'wipe', 'delete_files']),
     payload: string().when('action', {
-        is: (v) => v !== 'backup',
+        is: (v: string) => v !== 'backup',
         then: string().required('A task payload must be provided.'),
         otherwise: string(),
     }),
@@ -69,10 +69,10 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
     const { dismiss } = useContext(ModalContext);
     const { clearFlashes, addError } = useFlash();
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
-    const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
-    const eggFeatures = ServerContext.useStoreState((state) => state.server.data!.eggFeatures, isEqual);
+    const uuid = ServerContext.useStoreState(state => state.server.data!.uuid);
+    const appendSchedule = ServerContext.useStoreActions(actions => actions.schedules.appendSchedule);
+    const backupLimit = ServerContext.useStoreState(state => state.server.data!.featureLimits.backups);
+    const eggFeatures = ServerContext.useStoreState(state => state.server.data!.eggFeatures, isEqual);
 
     useEffect(() => {
         return () => {
@@ -90,16 +90,16 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
             });
         } else {
             createOrUpdateScheduleTask(uuid, schedule.id, task?.id, values)
-                .then((task) => {
-                    let tasks = schedule.tasks.map((t) => (t.id === task.id ? task : t));
-                    if (!schedule.tasks.find((t) => t.id === task.id)) {
+                .then(task => {
+                    let tasks = schedule.tasks.map(t => (t.id === task.id ? task : t));
+                    if (!schedule.tasks.find(t => t.id === task.id)) {
                         tasks = [...tasks, task];
                     }
 
                     appendSchedule({ ...schedule, tasks });
                     dismiss();
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error(error);
                     setSubmitting(false);
                     addError({ message: httpErrorToHuman(error), key: 'schedule:task' });
@@ -198,7 +198,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     name={'payload'}
                                     description={'Specify the files that will be deleted. (Whitelist)'}
                                 >
-                                    <FormikField as={Textarea} name={'payload'} rows={6}/>
+                                    <FormikField as={Textarea} name={'payload'} rows={6} />
                                 </FormikFieldWrapper>
                             </div>
                         )}

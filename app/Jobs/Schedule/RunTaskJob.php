@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use Pterodactyl\Jobs\Job;
 use Carbon\CarbonImmutable;
 use Pterodactyl\Models\Task;
-use InvalidArgumentException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -117,9 +116,9 @@ class RunTaskJob extends Job implements ShouldQueue
                     $filesService->deleteFiles($server, explode(PHP_EOL, $this->task->payload));
                     break;
                 default:
-                    throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
+                    throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             // If this isn't a DaemonConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
             if (!($this->task->continue_on_failure && $exception instanceof DaemonConnectionException)) {
@@ -134,7 +133,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Handle a failure while sending the action to the daemon or otherwise processing the job.
      */
-    public function failed(Exception $exception = null)
+    public function failed(\Exception $exception = null)
     {
         $this->markTaskNotQueued();
         $this->markScheduleComplete();

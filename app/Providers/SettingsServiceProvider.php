@@ -82,7 +82,7 @@ class SettingsServiceProvider extends ServiceProvider
             if (in_array($key, self::$encrypted)) {
                 try {
                     $value = $encrypter->decrypt($value);
-                } catch (DecryptException $exception) {
+                } catch (DecryptException) {
                 }
             }
 

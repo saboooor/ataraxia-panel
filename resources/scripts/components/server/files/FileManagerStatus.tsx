@@ -1,12 +1,13 @@
-import React, { useContext, useEffect } from 'react';
-import { ServerContext } from '@/state/server';
 import { CloudUploadIcon, XIcon } from '@heroicons/react/solid';
-import asDialog from '@/hoc/asDialog';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
+import { useSignal } from '@preact/signals-react';
+import { useContext, useEffect } from 'react';
+
 import { Button } from '@/components/elements/button/index';
+import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Code from '@/components/elements/Code';
-import { useSignal } from '@preact/signals-react';
+import asDialog from '@/hoc/asDialog';
+import { ServerContext } from '@/state/server';
 
 const svgProps = {
     cx: 16,
@@ -32,10 +33,10 @@ const Spinner = ({ progress, className }: { progress: number; className?: string
 
 const FileUploadList = () => {
     const { close } = useContext(DialogWrapperContext);
-    const cancelFileUpload = ServerContext.useStoreActions((actions) => actions.files.cancelFileUpload);
-    const clearFileUploads = ServerContext.useStoreActions((actions) => actions.files.clearFileUploads);
-    const uploads = ServerContext.useStoreState((state) =>
-        Object.entries(state.files.uploads).sort(([a], [b]) => a.localeCompare(b))
+    const removeFileUpload = ServerContext.useStoreActions(actions => actions.files.removeFileUpload);
+    const clearFileUploads = ServerContext.useStoreActions(actions => actions.files.clearFileUploads);
+    const uploads = ServerContext.useStoreState(state =>
+        Object.entries(state.files.uploads).sort(([a], [b]) => a.localeCompare(b)),
     );
 
     return (
@@ -49,7 +50,7 @@ const FileUploadList = () => {
                     </Tooltip>
                     <Code className={'flex-1 truncate'}>{name}</Code>
                     <button
-                        onClick={cancelFileUpload.bind(this, name)}
+                        onClick={removeFileUpload.bind(this, name)}
                         className={'text-gray-500 hover:text-gray-200 transition-colors duration-75'}
                     >
                         <XIcon className={'w-5 h-5'} />
@@ -74,8 +75,8 @@ const FileUploadListDialog = asDialog({
 export default () => {
     const open = useSignal(false);
 
-    const count = ServerContext.useStoreState((state) => Object.keys(state.files.uploads).length);
-    const progress = ServerContext.useStoreState((state) => ({
+    const count = ServerContext.useStoreState(state => Object.keys(state.files.uploads).length);
+    const progress = ServerContext.useStoreState(state => ({
         uploaded: Object.values(state.files.uploads).reduce((count, file) => count + file.loaded, 0),
         total: Object.values(state.files.uploads).reduce((count, file) => count + file.total, 0),
     }));
