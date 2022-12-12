@@ -46,16 +46,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: Release production build
-        uses: docker/build-push-action@v3
-        if: "contains(github.ref, 'release/v')"
-        with:
-          context: .
-          file: ./Containerfile
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+      - name: Update version
+        if: "github.event_name == 'release' && github.event.action == 'published'"
+        env:
+          REF: ${{ github.event.release.tag_name }}
+        run: |
+          sed -i "s/    'version' => 'canary',/    'version' => '${REF:1}',/" config/app.php
 
       - name: Release development build
         uses: docker/build-push-action@v3
