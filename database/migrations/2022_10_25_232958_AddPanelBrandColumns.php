@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
 class AddPanelBrandColumns extends Migration
@@ -12,16 +13,20 @@ class AddPanelBrandColumns extends Migration
      */
     public function up()
     {
-        DB::table('settings')->insert(
-            [
-            'key' => 'settings::app:icon',
-            ]
-        );
-        DB::table('settings')->insert(
-            [
-            'key' => 'settings::app:logo',
-            ]
-        );
+        if (!Schema::hasColumn('settings', 'settings::app:icon')) {
+            DB::table('settings')->insert(
+                [
+                'key' => 'settings::app:icon',
+                ]
+            );
+        }
+        if (!Schema::hasColumn('settings', 'settings::app:logo')) {
+            DB::table('settings')->insert(
+                [
+                'key' => 'settings::app:logo',
+                ]
+            );
+        }
     }
 
     /**
