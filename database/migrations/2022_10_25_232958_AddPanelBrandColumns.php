@@ -13,20 +13,16 @@ class AddPanelBrandColumns extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('settings', 'settings::app:icon')) {
-            DB::table('settings')->insert(
-                [
-                'key' => 'settings::app:icon',
-                ]
-            );
-        }
-        if (!Schema::hasColumn('settings', 'settings::app:logo')) {
-            DB::table('settings')->insert(
-                [
-                'key' => 'settings::app:logo',
-                ]
-            );
-        }
+        DB::table('settings')->insertOrIgnore(
+            [
+            'key' => 'settings::app:icon',
+            ]
+        );
+        DB::table('settings')->insertOrIgnore(
+            [
+            'key' => 'settings::app:logo',
+            ]
+        );
     }
 
     /**
